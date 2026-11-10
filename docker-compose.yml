@@ -1,0 +1,88 @@
+# docker compose up --build   ->  UI: http://localhost:3000   API: http://localhost:8080
+name: school-admission
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: school_admission
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      # Named volume: data survives `docker compose down` + `up` (only `down -v` deletes it)
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d school_admission"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      target: runtime
+    environment:
+      ConnectionStrings__Default: ${DB_CONNECTION:-Host=postgres;Port=5432;Database=school_admission;Username=postgres;Password=postgres;Maximum Pool Size=40}
+      HOLD_DURATION_SECONDS: ${HOLD_DURATION_SECONDS:-600}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-*}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      target: runtime
+    environment:
+      # URL the *browser* uses to reach the backend
+      API_URL: ${API_URL:-http://localhost:8080}
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # --- Bonus: a second backend process on another port, same database -----------
+  # docker compose --profile multi up --build   ->  second API on http://localhost:8081
+  backend-2:
+    profiles: ["multi"]
+    build:
+      context: ./backend
+      target: runtime
+    environment:
+      ConnectionStrings__Default: ${DB_CONNECTION:-Host=postgres;Port=5432;Database=school_admission;Username=postgres;Password=postgres;Maximum Pool Size=40}
+      HOLD_DURATION_SECONDS: ${HOLD_DURATION_SECONDS:-600}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-*}
+    ports:
+      - "8081:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # --- Tests (only Docker needed) ----------------------------------------------
+  # docker compose --profile test run --rm backend-tests
+  backend-tests:
+    profiles: ["test"]
+    build:
+      context: ./backend
+      target: test
+    environment:
+      TEST_DB_CONNECTION: Host=postgres;Port=5432;Username=postgres;Password=postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # docker compose --profile test run --rm frontend-tests
+  frontend-tests:
+    profiles: ["test"]
+    build:
+      context: ./frontend
+      target: test
+
+volumes:
+  pgdata:
