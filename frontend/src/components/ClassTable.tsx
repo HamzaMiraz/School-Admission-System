@@ -1,0 +1,57 @@
+import type { SchoolClass } from '../api';
+
+interface Props {
+  classes: SchoolClass[];
+  /** When given, each row gets an "Apply" button. */
+  onApply?: (schoolClass: SchoolClass) => void;
+  applyDisabledReason?: string;
+  applyingClassId?: string;
+}
+
+export function ClassTable({ classes, onApply, applyDisabledReason, applyingClassId }: Props) {
+  return (
+    <div className="table-wrap">
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th className="num">Total seats</th>
+            <th className="num">On hold</th>
+            <th className="num">Confirmed</th>
+            <th className="num">Available</th>
+            {onApply && <th aria-label="Actions" />}
+          </tr>
+        </thead>
+        <tbody>
+          {classes.map((c) => {
+            const full = c.availableSeats <= 0;
+            return (
+              <tr key={c.id} data-testid={`class-row-${c.id}`}>
+                <td>{c.name}</td>
+                <td className="num">{c.totalSeats}</td>
+                <td className="num">{c.heldSeats}</td>
+                <td className="num">{c.confirmedSeats}</td>
+                <td className={`num ${full ? 'text-danger' : 'text-success'}`}>
+                  <strong>{c.availableSeats}</strong>
+                </td>
+                {onApply && (
+                  <td className="actions">
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      disabled={full || !!applyDisabledReason || applyingClassId !== undefined}
+                      title={full ? 'No seats available right now' : applyDisabledReason}
+                      onClick={() => onApply(c)}
+                    >
+                      {applyingClassId === c.id ? 'Applying…' : full ? 'Full' : 'Apply'}
+                    </button>
+                  </td>
+                )}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
