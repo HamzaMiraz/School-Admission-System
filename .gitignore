@@ -1,0 +1,24 @@
+# Local tool caches (NuGet, npm, temp) kept inside the project folder
+.cache/
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+TestResults/
+
+# Node / Vite
+node_modules/
+dist/
+coverage/
+*.local
+
+# Editors / OS
+.idea/
+.DS_Store
+Thumbs.db
+
+# Env files
+.env
