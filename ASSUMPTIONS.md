@@ -10,8 +10,8 @@ Where the brief was silent, these are the choices I made and why.
   `HELD` hold whose `expiresAt` has passed as `EXPIRED` immediately. A background worker
   additionally rewrites such rows to `EXPIRED` every 5 s, only to keep the stored data tidy.
 - **A student can apply for only one class.** The brief requires at most one active application
-  (`HELD` or `CONFIRMED`) per student *per class*; this system is stricter: one active application
-  in the **whole school** (a child is admitted to one class and shift). Applying elsewhere returns
+  (`HELD` or `CONFIRMED`) per student *per class*. I made it stricter: one active application
+  in the **whole school**, because in reality a child is admitted to one class and one shift. Applying elsewhere returns
   `409 ALREADY_APPLIED_ELSEWHERE`. After the application is cancelled or expires, the student can
   apply to any class again. A per-student PostgreSQL advisory lock makes this safe against
   simultaneous requests, also across backend processes.
