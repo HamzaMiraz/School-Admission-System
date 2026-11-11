@@ -30,6 +30,9 @@ public abstract class ApiTestBase : IAsyncLifetime
 
     protected virtual int HoldDurationSeconds => 600;
 
+    /// <summary>Extra configuration for the API under test, e.g. ONE_CLASS_PER_STUDENT.</summary>
+    protected virtual IReadOnlyDictionary<string, string?>? ExtraSettings => null;
+
     public Task InitializeAsync()
     {
         Factory = StartApiInstance();
@@ -40,7 +43,7 @@ public abstract class ApiTestBase : IAsyncLifetime
     /// <summary>Starts another API instance (separate DI container and connection pool) on the same database.</summary>
     protected AdmissionApiFactory StartApiInstance()
     {
-        var factory = new AdmissionApiFactory(Database.ConnectionString, HoldDurationSeconds, Clock);
+        var factory = new AdmissionApiFactory(Database.ConnectionString, HoldDurationSeconds, Clock, ExtraSettings);
         _factories.Add(factory);
         return factory;
     }

@@ -79,6 +79,15 @@ public sealed class AdmissionService(AdmissionDbContext db, TimeProvider clock, 
     public async Task<HoldResponse> CreateHoldAsync(string classId, string studentId, CancellationToken ct)
     {
         await using var tx = await db.Database.BeginTransactionAsync(ct);
+        var oneClassPerStudent = options.Value.OneClassPerStudent;
+
+        if (oneClassPerStudent)
+        {
+            // Serialize this student's applications across all classes (and all processes), so two
+            // simultaneous applications to different classes can't both pass the check below.
+            // Always taken before the class lock, so the lock order stays consistent.
+            await db.Database.ExecuteSqlAsync($"SELECT pg_advisory_xact_lock(hashtext({studentId}))", ct);
+        }
 
         var schoolClass = (await db.Classes
                 .FromSql($"SELECT * FROM classes WHERE id = {classId} FOR UPDATE")
@@ -105,6 +114,23 @@ public sealed class AdmissionService(AdmissionDbContext db, TimeProvider clock, 
                 ? "This student is already admitted to this class."
                 : "This student already has an application in progress for this class.";
             throw ApiException.Conflict("ALREADY_APPLIED", message, new { holdId = existing.Id });
+        }
+
+        if (oneClassPerStudent)
+        {
+            var elsewhere = await db.Holds
+                .Where(h => h.StudentId == studentId && h.ClassId != classId
+                            && ((h.Status == HoldStatus.Held && h.ExpiresAt > now) || h.Status == HoldStatus.Confirmed))
+                .Select(h => new { h.Id, h.Status, ClassName = h.Class!.Name })
+                .FirstOrDefaultAsync(ct);
+            if (elsewhere is not null)
+            {
+                var message = elsewhere.Status == HoldStatus.Confirmed
+                    ? $"This student is already admitted to {elsewhere.ClassName}. A student can be admitted to only one class."
+                    : $"This student already has an application for {elsewhere.ClassName}. A student can apply for only one class — cancel that application first to apply here.";
+                throw ApiException.Conflict("ALREADY_APPLIED_ELSEWHERE", message,
+                    new { holdId = elsewhere.Id, className = elsewhere.ClassName });
+            }
         }
 
         var taken = await ActiveHolds(classId, now).CountAsync(ct);

@@ -64,6 +64,58 @@ describe('ClassesPage search and order', () => {
   });
 });
 
+describe('ClassesPage one class per student', () => {
+  const open: SchoolClass[] = [
+    { id: 'c_1', name: 'Class 6 - Morning Shift', totalSeats: 10, heldSeats: 1, confirmedSeats: 0, availableSeats: 9 },
+    { id: 'c_2', name: 'Class 7 - Day Shift', totalSeats: 10, heldSeats: 0, confirmedSeats: 0, availableSeats: 10 },
+  ];
+
+  it('blocks applying to other classes while the student has an application', async () => {
+    fakeBackend((_, path) =>
+      path === '/me/holds'
+        ? json(200, [
+            {
+              holdId: 'h_1',
+              classId: 'c_1',
+              className: 'Class 6 - Morning Shift',
+              status: 'HELD',
+              expiresAt: '2099-01-01T00:00:00Z',
+              remainingSeconds: 500,
+            },
+          ])
+        : json(200, open),
+    );
+
+    renderPage(STUDENT_ID);
+
+    expect(await screen.findByText(/already applied for Class 6 - Morning Shift/)).toBeInTheDocument();
+    expect(within(screen.getByTestId('class-row-c_2')).getByRole('button', { name: 'Apply' })).toBeDisabled();
+    expect(within(screen.getByTestId('class-row-c_1')).getByRole('button', { name: 'Apply' })).toBeDisabled();
+  });
+
+  it('allows applying again once the earlier application is cancelled', async () => {
+    fakeBackend((_, path) =>
+      path === '/me/holds'
+        ? json(200, [
+            {
+              holdId: 'h_1',
+              classId: 'c_1',
+              className: 'Class 6 - Morning Shift',
+              status: 'CANCELLED',
+              expiresAt: '2099-01-01T00:00:00Z',
+            },
+          ])
+        : json(200, open),
+    );
+
+    renderPage(STUDENT_ID);
+
+    const row = within(await screen.findByTestId('class-row-c_2'));
+    expect(row.getByRole('button', { name: 'Apply' })).toBeEnabled();
+    expect(screen.queryByText(/already applied/)).not.toBeInTheDocument();
+  });
+});
+
 describe('ClassesPage', () => {
   it('shows seat counts for every class and marks full classes', async () => {
     fakeBackend(() => json(200, classes));

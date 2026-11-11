@@ -55,6 +55,7 @@ The UI has two panels.
 | Variable | Used by | Default | Meaning |
 | --- | --- | --- | --- |
 | `HOLD_DURATION_SECONDS` | backend | `600` | How long a seat stays held before it expires |
+| `ONE_CLASS_PER_STUDENT` | backend | `true` | A student may have only one active application in the whole school; `false` = only one per class (the brief's rule) |
 | `ConnectionStrings__Default` | backend | compose: the `postgres` service | PostgreSQL connection string (in compose set it via `DB_CONNECTION`) |
 | `CORS_ALLOWED_ORIGINS` | backend | `*` | Comma-separated origins allowed to call the API |
 | `API_URL` | frontend container | `http://localhost:8080` | Backend URL used by the browser; applied at container start, no rebuild |
@@ -67,8 +68,8 @@ Example: `HOLD_DURATION_SECONDS=60 docker compose up` (PowerShell: `$env:HOLD_DU
 With Docker only:
 
 ```bash
-docker compose --profile test run --rm backend-tests    # 35 xUnit tests against a real PostgreSQL
-docker compose --profile test run --rm frontend-tests   # 33 Vitest + Testing Library tests
+docker compose --profile test run --rm backend-tests    # 38 xUnit tests against a real PostgreSQL
+docker compose --profile test run --rm frontend-tests   # 36 Vitest + Testing Library tests
 ```
 
 Without Docker (needs .NET 10 SDK / Node 20.19+ and a PostgreSQL server):

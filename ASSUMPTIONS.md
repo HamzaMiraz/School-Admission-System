@@ -9,10 +9,13 @@ Where the brief was silent, these are the choices I made and why.
 - **Expiry needs no API call and no background job.** Seat counts and every response treat a
   `HELD` hold whose `expiresAt` has passed as `EXPIRED` immediately. A background worker
   additionally rewrites such rows to `EXPIRED` every 5 s, only to keep the stored data tidy.
-- **One active application per student per class** (`HELD` or `CONFIRMED`), as the brief says.
-  A student *may* hold seats in different classes at the same time (e.g. Morning and Day shift),
-  because the rule is stated per class. After an application expires or is cancelled, the student
-  can apply again.
+- **A student can apply for only one class.** The brief requires at most one active application
+  (`HELD` or `CONFIRMED`) per student *per class*; this system is stricter: one active application
+  in the **whole school** (a child is admitted to one class and shift). Applying elsewhere returns
+  `409 ALREADY_APPLIED_ELSEWHERE`. After the application is cancelled or expires, the student can
+  apply to any class again. A per-student PostgreSQL advisory lock makes this safe against
+  simultaneous requests, also across backend processes.
+  Set `ONE_CLASS_PER_STUDENT=false` to fall back to exactly the brief's per-class rule.
 
 ## Confirm (pay) and cancel
 

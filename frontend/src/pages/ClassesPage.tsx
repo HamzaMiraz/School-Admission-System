@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { api, ApiError, errorMessage, type SchoolClass } from '../api';
+import { api, ApiError, errorMessage, type Hold, type SchoolClass } from '../api';
 import { ClassTable } from '../components/ClassTable';
 import { Alert, Loading, StaleDataWarning } from '../components/common';
-import { CLASS_POLL_MS } from '../config';
+import { CLASS_POLL_MS, HOLD_POLL_MS } from '../config';
+import { useNow } from '../hooks/useNow';
 import { usePolling } from '../hooks/usePolling';
 import { compareClassNames, GRADES, parseClassName, SHIFTS } from '../lib/classNames';
+import { displayStatus, holdDeadline } from '../lib/time';
 import { useStudent } from '../student';
 
 interface ActionError {
@@ -17,6 +19,18 @@ export function ClassesPage() {
   const { studentId } = useStudent();
   const navigate = useNavigate();
   const classes = usePolling(api.listClasses, CLASS_POLL_MS, 'classes');
+  const myHolds = usePolling(
+    () => (studentId ? api.myHolds(studentId) : Promise.resolve([] as Hold[])),
+    HOLD_POLL_MS,
+    `me:${studentId}`,
+  );
+  const now = Math.max(useNow(1000), myHolds.receivedAt);
+  // A student can apply for only one class: an unpaid-but-running or paid application blocks the rest.
+  const activeHold = (myHolds.data ?? []).find((h) => {
+    const status = displayStatus(h, holdDeadline(h, myHolds.receivedAt), now);
+    return status === 'HELD' || status === 'CONFIRMED';
+  });
+  const activeStatus = activeHold && displayStatus(activeHold, holdDeadline(activeHold, myHolds.receivedAt), now);
   const [applyingClassId, setApplyingClassId] = useState<string>();
   const [actionError, setActionError] = useState<ActionError>();
   const [gradeFilter, setGradeFilter] = useState('');
@@ -47,6 +61,7 @@ export function ClassesPage() {
         existingHoldId: typeof holdId === 'string' ? holdId : undefined,
       });
       void classes.refresh();
+      void myHolds.refresh();
     } finally {
       setApplyingClassId(undefined);
     }
@@ -62,6 +77,14 @@ export function ClassesPage() {
 
       {!studentId && (
         <Alert kind="info">Sign in with the student's birth registration number to apply.</Alert>
+      )}
+      {activeHold && (
+        <Alert kind={activeStatus === 'CONFIRMED' ? 'success' : 'info'}>
+          {activeStatus === 'CONFIRMED'
+            ? `Admission confirmed for ${activeHold.className ?? 'a class'}. A student can be admitted to only one class.`
+            : `You have already applied for ${activeHold.className ?? 'a class'}. A student can apply for only one class — pay the fee to confirm it, or cancel it to choose another class.`}{' '}
+          <Link to={`/applications/${activeHold.holdId}`}>View application</Link>
+        </Alert>
       )}
       {actionError && (
         <Alert kind="error">
@@ -140,7 +163,13 @@ export function ClassesPage() {
                 <ClassTable
                   classes={visible}
                   onApply={apply}
-                  applyDisabledReason={studentId ? undefined : 'Sign in first'}
+                  applyDisabledReason={
+                    !studentId
+                      ? 'Sign in first'
+                      : activeHold
+                        ? 'A student can apply for only one class'
+                        : undefined
+                  }
                   applyingClassId={applyingClassId}
                 />
               )}
