@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { api, errorMessage } from '../api';
 import { ClassTable } from '../components/ClassTable';
-import { Alert, Loading, StaleDataWarning } from '../components/common';
+import { Alert, Loading, StaleDataWarning, Stat } from '../components/common';
 import { CLASS_POLL_MS } from '../config';
 import { usePolling } from '../hooks/usePolling';
 
@@ -40,15 +40,6 @@ export function AdminOverviewPage() {
         <Loading />
       )}
     </section>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="stat" data-testid={`stat-${label}`}>
-      <div className="stat-value">{value}</div>
-      <div className="stat-label">{label}</div>
-    </div>
   );
 }
 

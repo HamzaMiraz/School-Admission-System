@@ -43,3 +43,13 @@ export function Loading({ label = 'Loading…' }: { label?: string }) {
     </p>
   );
 }
+
+/** A number with a label, used on the admin dashboards. */
+export function Stat({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="stat" data-testid={`stat-${label}`}>
+      <div className="stat-value">{value}</div>
+      <div className="stat-label">{label}</div>
+    </div>
+  );
+}

@@ -27,18 +27,21 @@ Stop with `Ctrl+C` or `docker compose down`. Data is kept in the `pgdata` volume
 
 ### Using the app
 
-The UI has two panels; switch with the button at the top right.
+The UI has two panels.
 
 **Admin panel** — http://localhost:3000/admin (school admin)
 
 - **Overview**: seat totals and every class's total / on hold / confirmed / available seats, live.
+- **Applications**: every application — student's birth registration number, class, shift, when
+  they applied, status and whether the fee is paid. Filter by status, class/shift or student.
 - **Create class**: choose the class (1–10) and the shift (Morning / Day), enter the seats,
   e.g. Class 6 + Morning Shift + 120. Every shift is its own class.
 
 **User panel** — http://localhost:3000 (parents)
 
-1. Type the student's **17-digit birth registration number** in the box at the top (it is
-   remembered in the browser). Bangla digits are accepted.
+1. **Sign in** with the student's **17-digit birth registration number** (no password; Bangla
+   digits are accepted). The browser remembers it until **Sign out**. To try several students,
+   sign out and sign in with another number, or use another browser / private window.
 2. **Classes**: see total / on hold / confirmed / available seats (refreshes every 3 s) and press
    **Apply**.
 3. **Application** page: status, live countdown, **Pay admission fee** (payment is simulated and
@@ -63,8 +66,8 @@ Example: `HOLD_DURATION_SECONDS=60 docker compose up` (PowerShell: `$env:HOLD_DU
 With Docker only:
 
 ```bash
-docker compose --profile test run --rm backend-tests    # 31 xUnit tests against a real PostgreSQL
-docker compose --profile test run --rm frontend-tests   # 29 Vitest + Testing Library tests
+docker compose --profile test run --rm backend-tests    # 35 xUnit tests against a real PostgreSQL
+docker compose --profile test run --rm frontend-tests   # 31 Vitest + Testing Library tests
 ```
 
 Without Docker (needs .NET 10 SDK / Node 20.19+ and a PostgreSQL server):
@@ -107,6 +110,7 @@ Base URL `http://localhost:8080`. Student identity: header `X-Student-Id` (17 di
 | 6 | `POST /holds/{holdId}/confirm` + `X-Student-Id` | Pay fee, confirm admission | `200` |
 | 7 | `DELETE /holds/{holdId}` + `X-Student-Id` | Cancel application | `204` |
 | 8 | `GET /me/holds` + `X-Student-Id` | This student's applications | `200` |
+| extra | `GET /admin/holds?status=&classId=&studentId=` | All applications (admin panel) | `200` |
 
 Errors are JSON: `{ "error": "NO_SEATS_AVAILABLE", "message": "Sorry, all seats …" }`.
 Codes: `400` invalid input, `403` someone else's application, `404` unknown id,

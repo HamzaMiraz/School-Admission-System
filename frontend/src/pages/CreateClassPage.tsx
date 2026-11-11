@@ -4,19 +4,9 @@ import { ClassTable } from '../components/ClassTable';
 import { Alert, Loading, StaleDataWarning } from '../components/common';
 import { CLASS_POLL_MS } from '../config';
 import { usePolling } from '../hooks/usePolling';
+import { buildClassName as className, GRADES, SHIFTS } from '../lib/classNames';
 
 const MAX_SEATS = 100000;
-
-/** The school admits Class 1 to Class 10. */
-export const GRADES = Array.from({ length: 10 }, (_, i) => i + 1);
-
-/** Each shift of a class is admitted separately, with its own seats. */
-export const SHIFTS = ['Morning', 'Day'] as const;
-
-/** Name sent to the API, e.g. "Class 6 - Morning Shift". */
-export function className(grade: number, shift: string): string {
-  return `Class ${grade} - ${shift} Shift`;
-}
 
 function validate(grade: string, shift: string, seats: string): string | null {
   if (!grade) return 'Please choose a class (1 to 10).';

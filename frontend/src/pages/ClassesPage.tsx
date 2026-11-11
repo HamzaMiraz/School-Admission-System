@@ -46,7 +46,7 @@ export function ClassesPage() {
       </p>
 
       {!studentId && (
-        <Alert kind="info">Enter the student's 17-digit birth registration number at the top to apply.</Alert>
+        <Alert kind="info">Sign in with the student's birth registration number to apply.</Alert>
       )}
       {actionError && (
         <Alert kind="error">

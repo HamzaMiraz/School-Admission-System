@@ -63,7 +63,17 @@ public static class AdmissionEndpoints
             CancellationToken ct) =>
             service.ListStudentHoldsAsync(StudentIdentity.Require(studentIdHeader), ct));
 
-        app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
+        // Extra (not in the brief): all applications for the admin panel, with optional filters.
+        // e.g. /admin/holds?status=CONFIRMED&classId=c_123&studentId=2015
+        app.MapGet("/admin/holds", (
+            string? status,
+            string? classId,
+            string? studentId,
+            AdmissionService service,
+            CancellationToken ct) =>
+            service.ListAllHoldsAsync(status, classId, studentId, ct));
+
+        app.MapGet("/health",() => Results.Ok(new { status = "ok" }));
 
         return app;
     }

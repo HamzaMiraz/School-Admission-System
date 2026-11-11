@@ -1,34 +1,47 @@
-import { Link, NavLink, Outlet, Route, Routes } from 'react-router-dom';
+import { Link, Navigate, NavLink, Outlet, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { StudentIdBar } from './components/StudentIdBar';
+import { AdminApplicationsPage } from './pages/AdminApplicationsPage';
 import { AdminOverviewPage } from './pages/AdminOverviewPage';
 import { ApplicationPage } from './pages/ApplicationPage';
 import { ClassesPage } from './pages/ClassesPage';
 import { CreateClassPage } from './pages/CreateClassPage';
+import { LoginPage } from './pages/LoginPage';
 import { MyApplicationsPage } from './pages/MyApplicationsPage';
+import { useStudent } from './student';
 
 export function App() {
   return (
     <Routes>
+      <Route path="/login" element={<LoginPage />} />
       <Route element={<UserLayout />}>
         <Route path="/" element={<ClassesPage />} />
         <Route path="/applications" element={<MyApplicationsPage />} />
         <Route path="/applications/:holdId" element={<ApplicationPage />} />
+        <Route path="*" element={<NotFound home="/" />} />
       </Route>
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminOverviewPage />} />
+        <Route path="applications" element={<AdminApplicationsPage />} />
         <Route path="create" element={<CreateClassPage />} />
         <Route path="*" element={<NotFound home="/admin" />} />
-      </Route>
-      <Route element={<UserLayout />}>
-        <Route path="*" element={<NotFound home="/" />} />
       </Route>
     </Routes>
   );
 }
 
-/** Parents' panel: apply, pay and follow applications for one student. */
+/** Parents' panel: only for a signed-in student; otherwise go to the sign-in page. */
 function UserLayout() {
+  const { studentId, setStudentId } = useStudent();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  if (!studentId) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+
+  const signOut = () => {
+    setStudentId('');
+    navigate('/login', { replace: true });
+  };
+
   return (
     <div className="app">
       <header className="header">
@@ -41,14 +54,18 @@ function UserLayout() {
               Classes
             </NavLink>
             <NavLink to="/applications">My applications</NavLink>
-            <Link to="/admin" className="nav-switch">
-              Admin panel →
-            </Link>
           </nav>
+          <div className="user-box">
+            <span className="user-id" title="Signed in with this birth registration number">
+              👤 <span className="mono">{studentId}</span>
+            </span>
+            <button type="button" className="btn btn-header" onClick={signOut}>
+              Sign out
+            </button>
+          </div>
         </div>
       </header>
       <div className="container">
-        <StudentIdBar />
         <main>
           <ErrorBoundary>
             <Outlet />
@@ -59,7 +76,7 @@ function UserLayout() {
   );
 }
 
-/** School admin's panel: manage classes and watch seats. No login (the brief asks for none). */
+/** School admin's panel. No login (the brief asks for none). */
 function AdminLayout() {
   return (
     <div className="app">
@@ -72,6 +89,7 @@ function AdminLayout() {
             <NavLink to="/admin" end>
               Overview
             </NavLink>
+            <NavLink to="/admin/applications">Applications</NavLink>
             <NavLink to="/admin/create">Create class</NavLink>
             <Link to="/" className="nav-switch">
               ← User panel

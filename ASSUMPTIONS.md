@@ -33,8 +33,13 @@ Where the brief was silent, these are the choices I made and why.
   screen offers these as dropdowns and sends the name as `"Class 6 - Morning Shift"`. The API itself
   still accepts any name, so the contract in the brief (`name` + `totalSeats`) is unchanged.
 - The UI is split into a **User panel** (`/`, parents) and an **Admin panel** (`/admin`, school).
-  The brief asks for no login, so the admin panel is separated by URL and menu only — anyone can
-  open it. In a real system it would be behind admin authentication.
+  Parents **sign in with the birth registration number only** — no password, because the brief
+  identifies a student by this number alone. It is remembered in the browser until "Sign out".
+  The admin panel has no login (the brief asks for none) — anyone can open it. In a real system
+  both would need proper authentication.
+- **Extra endpoint `GET /admin/holds`** (optional `status`, `classId`, `studentId` filters) lists
+  every application for the admin panel's "Applications" page. The 8 endpoints from the brief are
+  unchanged; the brief allows adding endpoints.
 - Class name: required, ≤ 100 chars, **unique ignoring case and surrounding spaces** (`409`
   otherwise) — two classes with the same name would confuse parents. `totalSeats`: whole number
   1 – 100 000. Classes can't be edited or deleted (not asked for).

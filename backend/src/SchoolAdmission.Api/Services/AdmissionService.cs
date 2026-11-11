@@ -161,6 +161,49 @@ public sealed class AdmissionService(AdmissionDbContext db, TimeProvider clock, 
         return rows.Select(r => HoldResponse.From(r.Hold, r.ClassName, now)).ToList();
     }
 
+    public const int AdminListLimit = 1000;
+
+    /// <summary>
+    /// Every application, newest first, for the admin panel. Filters are optional; <paramref name="status"/>
+    /// is matched against the effective status (a timed-out HELD row counts as EXPIRED).
+    /// </summary>
+    public async Task<IReadOnlyList<HoldResponse>> ListAllHoldsAsync(
+        string? status, string? classId, string? studentId, CancellationToken ct)
+    {
+        var now = clock.GetUtcNow();
+        var query = db.Holds.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(classId))
+        {
+            query = query.Where(h => h.ClassId == classId);
+        }
+        if (!string.IsNullOrWhiteSpace(studentId))
+        {
+            var prefix = studentId.Trim();
+            query = query.Where(h => h.StudentId.StartsWith(prefix));
+        }
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            query = status.Trim().ToUpperInvariant() switch
+            {
+                HoldStatusNames.Held => query.Where(h => h.Status == HoldStatus.Held && h.ExpiresAt > now),
+                HoldStatusNames.Expired => query.Where(h =>
+                    h.Status == HoldStatus.Expired || (h.Status == HoldStatus.Held && h.ExpiresAt <= now)),
+                HoldStatusNames.Confirmed => query.Where(h => h.Status == HoldStatus.Confirmed),
+                HoldStatusNames.Cancelled => query.Where(h => h.Status == HoldStatus.Cancelled),
+                _ => throw ApiException.BadRequest("INVALID_STATUS",
+                    "Status must be one of HELD, CONFIRMED, EXPIRED or CANCELLED."),
+            };
+        }
+
+        var rows = await query
+            .OrderByDescending(h => h.CreatedAt)
+            .Take(AdminListLimit)
+            .Select(h => new { Hold = h, ClassName = h.Class!.Name })
+            .ToListAsync(ct);
+        return rows.Select(r => HoldResponse.From(r.Hold, r.ClassName, now)).ToList();
+    }
+
     public async Task<HoldResponse> ConfirmHoldAsync(string holdId, string studentId, CancellationToken ct)
     {
         var classId = await db.Holds.Where(h => h.Id == holdId).Select(h => h.ClassId).FirstOrDefaultAsync(ct)

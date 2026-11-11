@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import { Route, Routes } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import type { SchoolClass } from '../api';
-import { StudentIdBar } from '../components/StudentIdBar';
 import { fakeBackend, json, renderApp, STUDENT_ID } from '../test/utils';
 import { ClassesPage } from './ClassesPage';
 
@@ -14,13 +13,10 @@ const classes: SchoolClass[] = [
 
 function renderPage(studentId?: string) {
   return renderApp(
-    <>
-      <StudentIdBar />
-      <Routes>
-        <Route path="/" element={<ClassesPage />} />
-        <Route path="/applications/:holdId" element={<p>Application page for this hold</p>} />
-      </Routes>
-    </>,
+    <Routes>
+      <Route path="/" element={<ClassesPage />} />
+      <Route path="/applications/:holdId" element={<p>Application page for this hold</p>} />
+    </Routes>,
     { studentId },
   );
 }
@@ -37,26 +33,6 @@ describe('ClassesPage', () => {
     }
     expect(within(morning).getByRole('button', { name: 'Apply' })).toBeEnabled();
     expect(within(screen.getByTestId('class-row-c_2')).getByRole('button', { name: 'Full' })).toBeDisabled();
-  });
-
-  it('asks for the birth registration number before applying', async () => {
-    fakeBackend(() => json(200, classes));
-
-    renderPage();
-
-    const row = await screen.findByTestId('class-row-c_1');
-    expect(within(row).getByRole('button', { name: 'Apply' })).toBeDisabled();
-    expect(screen.getByText(/Enter the student's 17-digit birth registration number/)).toBeInTheDocument();
-
-    await userEvent.type(screen.getByLabelText(/birth registration number/i), '123');
-    await userEvent.click(screen.getByRole('button', { name: 'Use this number' }));
-    expect(screen.getByRole('alert')).toHaveTextContent('must be 17 digits');
-
-    await userEvent.clear(screen.getByLabelText(/birth registration number/i));
-    await userEvent.type(screen.getByLabelText(/birth registration number/i), STUDENT_ID);
-    await userEvent.click(screen.getByRole('button', { name: 'Use this number' }));
-    expect(within(row).getByRole('button', { name: 'Apply' })).toBeEnabled();
-    expect(localStorage.getItem('school-admission.studentId')).toBe(STUDENT_ID);
   });
 
   it('opens the application after a successful apply', async () => {

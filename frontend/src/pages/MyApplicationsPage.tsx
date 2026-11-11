@@ -15,7 +15,7 @@ export function MyApplicationsPage() {
       {studentId ? (
         <ApplicationsList studentId={studentId} />
       ) : (
-        <Alert kind="info">Enter the student's 17-digit birth registration number at the top to see applications.</Alert>
+        <Alert kind="info">Sign in with the student's birth registration number to see applications.</Alert>
       )}
     </section>
   );

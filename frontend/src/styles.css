@@ -65,6 +65,83 @@ h2 {
   padding-bottom: 12px;
 }
 
+.user-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+}
+
+.btn-header {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
+  padding: 4px 12px;
+}
+
+.btn-header:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: linear-gradient(160deg, #0b4f8a 0%, #0b4f8a 35%, var(--bg) 35%);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 28px;
+  box-shadow: 0 10px 30px rgba(11, 79, 138, 0.15);
+}
+
+.login-card h1 {
+  margin: 0;
+  text-align: center;
+}
+
+.login-card > .muted {
+  text-align: center;
+  margin: 0 0 8px;
+}
+
+.login-card label {
+  font-weight: 600;
+}
+
+.login-logo {
+  font-size: 2.5rem;
+  text-align: center;
+}
+
+.login-footer {
+  text-align: center;
+  margin: 6px 0 0;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.filters label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.filters .input {
+  width: 100%;
+}
+
 .header-admin {
   background: #2d3748;
 }

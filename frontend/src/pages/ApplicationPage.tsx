@@ -119,11 +119,11 @@ export function ApplicationPage() {
         {status === 'CONFIRMED' && <Alert kind="success">Admission confirmed. The admission fee has been paid.</Alert>}
         {status === 'CANCELLED' && <Alert kind="info">This application was cancelled.</Alert>}
         {!studentId && isHeld && (
-          <Alert kind="info">Enter the birth registration number at the top to pay or cancel.</Alert>
+          <Alert kind="info">Sign in with the birth registration number to pay or cancel.</Alert>
         )}
         {ownedByOther && (
           <Alert kind="warning">
-            This application belongs to a different student. Change the number at the top to act on it.
+            This application belongs to a different student. Sign in as that student to act on it.
           </Alert>
         )}
 

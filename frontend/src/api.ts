@@ -18,6 +18,8 @@ export interface Hold {
   studentId?: string;
   status: HoldStatus;
   expiresAt: string;
+  createdAt?: string;
+  confirmedAt?: string | null;
   /** Seconds left at the moment the server answered; avoids trusting the browser clock. */
   remainingSeconds?: number;
 }
@@ -108,4 +110,19 @@ export const api = {
   cancelHold: (holdId: string, studentId: string) =>
     request<void>('DELETE', `/holds/${encodeURIComponent(holdId)}`, { studentId }),
   myHolds: (studentId: string) => request<Hold[]>('GET', '/me/holds', { studentId }),
+  /** Admin panel: every application, optionally filtered. */
+  adminHolds: (filters: AdminHoldFilters = {}) => {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(filters)) {
+      if (value) params.set(key, value);
+    }
+    const query = params.toString();
+    return request<Hold[]>('GET', `/admin/holds${query ? `?${query}` : ''}`);
+  },
 };
+
+export interface AdminHoldFilters {
+  status?: HoldStatus | '';
+  classId?: string;
+  studentId?: string;
+}
