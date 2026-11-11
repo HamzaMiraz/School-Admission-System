@@ -7,6 +7,7 @@ import { CLASS_POLL_MS, HOLD_POLL_MS } from '../config';
 import { useNow } from '../hooks/useNow';
 import { usePolling } from '../hooks/usePolling';
 import { compareClassNames, GRADES, parseClassName, SHIFTS } from '../lib/classNames';
+import { isClassOpen } from '../lib/deadline';
 import { displayStatus, holdDeadline } from '../lib/time';
 import { useStudent } from '../student';
 
@@ -43,10 +44,12 @@ export function ClassesPage() {
       const parsed = parseClassName(c.name);
       if (gradeFilter && parsed?.grade !== Number(gradeFilter)) return false;
       if (shiftFilter && parsed?.shift.toLowerCase() !== shiftFilter.toLowerCase()) return false;
-      if (onlyAvailable && c.availableSeats <= 0) return false;
+      if (onlyAvailable && (c.availableSeats <= 0 || !isClassOpen(c, now))) return false;
       return true;
     })
     .sort((a, b) => compareClassNames(a.name, b.name));
+  const openClasses = (classes.data ?? []).filter((c) => isClassOpen(c, now));
+  const freeSeats = openClasses.reduce((sum, c) => sum + Math.max(0, c.availableSeats), 0);
 
   const apply = async (schoolClass: SchoolClass) => {
     setActionError(undefined);
@@ -69,11 +72,28 @@ export function ClassesPage() {
 
   return (
     <section>
-      <h1>Class তালিকা</h1>
-      <p className="muted">
-        Seats are given first come, first served. Applying holds a seat for a limited time; pay the admission fee
-        before the time runs out to confirm admission. Counts update automatically.
-      </p>
+      <div className="hero">
+        <div>
+          <p className="hero-kicker">Admission open</p>
+          <h1>Classes</h1>
+          <p className="hero-text">
+            Seats are given first come, first served. Applying holds a seat for a limited time — pay the admission fee
+            before it runs out to confirm admission. Each class closes on its application deadline.
+          </p>
+        </div>
+        {classes.data && (
+          <div className="hero-stats">
+            <div>
+              <strong>{openClasses.length}</strong>
+              <span>classes open</span>
+            </div>
+            <div>
+              <strong>{freeSeats}</strong>
+              <span>free seats</span>
+            </div>
+          </div>
+        )}
+      </div>
 
       {!studentId && (
         <Alert kind="info">Sign in with the student's birth registration number to apply.</Alert>
@@ -137,7 +157,7 @@ export function ClassesPage() {
                 </div>
                 <label className="checkbox">
                   <input type="checkbox" checked={onlyAvailable} onChange={(e) => setOnlyAvailable(e.target.checked)} />
-                  Only show classes with free seats
+                  Only show classes I can apply to
                 </label>
               </div>
 

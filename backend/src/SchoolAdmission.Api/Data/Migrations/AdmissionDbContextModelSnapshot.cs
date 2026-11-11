@@ -93,6 +93,10 @@ namespace SchoolAdmission.Api.Data.Migrations
                         .HasColumnType("character varying(40)")
                         .HasColumnName("id");
 
+                    b.Property<DateTimeOffset?>("ApplicationDeadline")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("application_deadline");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");

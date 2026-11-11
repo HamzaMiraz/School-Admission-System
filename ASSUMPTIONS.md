@@ -17,6 +17,18 @@ Where the brief was silent, these are the choices I made and why.
   simultaneous requests, also across backend processes.
   Set `ONE_CLASS_PER_STUDENT=false` to fall back to exactly the brief's per-class rule.
 
+## Application deadline (my addition)
+
+- Each class can have an **application deadline**, set when the class is created
+  (`applicationDeadline` in `POST /classes`, ISO date-time; it must be in the future, otherwise `400`).
+  Class responses also return `applicationDeadline` and `isOpen`.
+- **After the deadline the class is closed:** new applications get `409 APPLICATIONS_CLOSED`. The
+  class stays visible (marked "Applications closed") so parents understand why they can't apply.
+- A hold made **before** the deadline can still be paid within its hold time, even if the deadline
+  passes meanwhile — the parent applied in time.
+- The field is **optional in the API**, so the brief's contract (`name` + `totalSeats`) still works:
+  a class without a deadline stays open. The admin panel always asks for one.
+
 ## Confirm (pay) and cancel
 
 - **Confirm** works only on your own, unexpired `HELD` application. Confirming an already

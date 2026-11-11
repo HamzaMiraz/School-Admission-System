@@ -51,9 +51,9 @@ function UserLayout() {
           </Link>
           <nav className="nav">
             <NavLink to="/" end>
-              Class তালিকা
+              Classes
             </NavLink>
-            <NavLink to="/applications">আমার আবেদন</NavLink>
+            <NavLink to="/applications">My applications</NavLink>
           </nav>
           <div className="user-box">
             <span className="user-id" title="Signed in with this birth registration number">
@@ -80,32 +80,32 @@ function UserLayout() {
 /** School admin's panel. No login (the brief asks for none). */
 function AdminLayout() {
   return (
-    <div className="app">
-      <header className="header header-admin">
-        <div className="container header-inner">
-          <Link to="/admin" className="brand">
-            <span className="brand-logo">🛠️</span>
-            <span>Admin Panel</span>
-          </Link>
-          <nav className="nav">
-            <NavLink to="/admin" end>
-              Overview
-            </NavLink>
-            <NavLink to="/admin/applications">Applications</NavLink>
-            <NavLink to="/admin/create">Class তৈরি</NavLink>
-            <Link to="/" className="nav-switch">
-              ← User panel
-            </Link>
-          </nav>
-        </div>
-      </header>
-      <div className="container">
-        <main>
-          <ErrorBoundary>
-            <Outlet />
-          </ErrorBoundary>
-        </main>
-      </div>
+    <div className="admin-shell">
+      <aside className="sidebar">
+        <Link to="/admin" className="brand">
+          <span className="brand-logo">🛠️</span>
+          <span>Admin Panel</span>
+        </Link>
+        <nav className="side-nav">
+          <NavLink to="/admin" end>
+            <span aria-hidden>📊</span> Overview
+          </NavLink>
+          <NavLink to="/admin/applications">
+            <span aria-hidden>🗂️</span> Applications
+          </NavLink>
+          <NavLink to="/admin/create">
+            <span aria-hidden>➕</span> Create class
+          </NavLink>
+        </nav>
+        <Link to="/" className="side-switch">
+          ← User panel
+        </Link>
+      </aside>
+      <main className="admin-main">
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
+      </main>
     </div>
   );
 }

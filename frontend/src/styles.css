@@ -22,7 +22,10 @@
   --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
   --shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.06);
   --shadow-lg: 0 20px 50px rgba(30, 27, 75, 0.25);
-  font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, Roboto, 'Noto Sans Bengali', sans-serif;
+  --glass: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(226, 232, 240, 0.9);
+  --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 55%, #a855f7 100%);
+  font-family: 'Inter', 'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, Roboto, 'Noto Sans Bengali', sans-serif;
   color: var(--text);
   background: var(--bg);
   line-height: 1.55;
@@ -35,7 +38,13 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  min-height: 100vh;
+  background:
+    radial-gradient(900px circle at 0% 0%, rgba(139, 92, 246, 0.13), transparent 60%),
+    radial-gradient(800px circle at 100% 10%, rgba(14, 165, 233, 0.11), transparent 55%),
+    radial-gradient(700px circle at 50% 100%, rgba(236, 72, 153, 0.07), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
 }
 
 a {
@@ -178,36 +187,148 @@ section > p.muted:first-of-type {
   padding: 6px 14px;
 }
 
-/* Admin panel: dark header */
-.header-admin {
-  background: #0f172a;
-  border-bottom-color: #1e293b;
+/* ---------- Admin panel: sidebar layout ---------- */
+.admin-shell {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  min-height: 100vh;
+  /* keeps the dark sidebar column full-height on long pages */
+  background: linear-gradient(90deg, #131536 0 250px, transparent 250px);
 }
 
-.header-admin .brand {
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 22px 16px;
+  background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%);
+  color: #e2e8f0;
+}
+
+.sidebar .brand {
   color: #f8fafc;
+  padding: 0 8px;
 }
 
-.header-admin .brand-logo {
+.sidebar .brand-logo {
   background: linear-gradient(135deg, #0ea5e9, #6366f1);
 }
 
-.header-admin .nav a {
-  color: #94a3b8;
+.side-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.header-admin .nav a:hover {
-  color: #f8fafc;
-  background: #1e293b;
+.side-nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: #a5b4fc;
+  font-weight: 550;
+  transition: background 0.15s, color 0.15s;
 }
 
-.header-admin .nav a.active {
+.side-nav a:hover {
+  background: rgba(255, 255, 255, 0.06);
   color: #fff;
-  background: #312e81;
+  text-decoration: none;
 }
 
-.header-admin .nav a.nav-switch {
-  border-color: #334155;
+.side-nav a.active {
+  background: rgba(129, 140, 248, 0.22);
+  color: #fff;
+  box-shadow: inset 3px 0 0 #818cf8;
+}
+
+.side-switch {
+  margin-top: auto;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(165, 180, 252, 0.3);
+  color: #c7d2fe;
+  text-align: center;
+}
+
+.side-switch:hover {
+  background: rgba(255, 255, 255, 0.06);
+  text-decoration: none;
+}
+
+.admin-main {
+  padding: 8px 36px 56px;
+  max-width: 1200px;
+  width: 100%;
+}
+
+/* ---------- Hero (class list) ---------- */
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 24px;
+  padding: 28px 32px;
+  border-radius: 22px;
+  color: #fff;
+  background:
+    radial-gradient(500px circle at 90% -20%, rgba(255, 255, 255, 0.25), transparent 60%),
+    var(--gradient);
+  box-shadow: 0 18px 40px rgba(99, 102, 241, 0.3);
+}
+
+.hero h1 {
+  margin: 2px 0 6px;
+  font-size: 2.2rem;
+  font-weight: 800;
+}
+
+.hero-kicker {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.hero-text {
+  margin: 0;
+  max-width: 60ch;
+  opacity: 0.92;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 12px;
+}
+
+.hero-stats > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 110px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(6px);
+}
+
+.hero-stats strong {
+  font-size: 1.7rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.hero-stats span {
+  font-size: 0.82rem;
+  opacity: 0.9;
 }
 
 /* ---------- Sign-in ---------- */
@@ -621,6 +742,7 @@ section > p.muted:first-of-type {
 
 .class-card-foot {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
@@ -842,5 +964,109 @@ section > p.muted:first-of-type {
 
   .nav a.nav-switch {
     margin-left: 0;
+  }
+}
+
+/* ---------- Glass surfaces & gradient accents ---------- */
+.card,
+.class-card,
+.stat,
+.table-wrap {
+  background: var(--glass);
+  border-color: var(--glass-border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.class-card {
+  border-radius: 18px;
+}
+
+.btn-primary {
+  background: var(--gradient);
+  border-color: transparent;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--gradient);
+  filter: brightness(1.07);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
+}
+
+.btn-primary:disabled {
+  background: #e2e8f0;
+  color: #64748b;
+  opacity: 1;
+}
+
+.nav a.active {
+  background: var(--gradient);
+  color: #fff;
+}
+
+.seat-bar-confirmed {
+  background: var(--gradient);
+}
+
+/* ---------- Application deadline ---------- */
+.deadline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: -4px 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.deadline-closed {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.class-card.is-closed {
+  background: rgba(241, 245, 249, 0.8);
+}
+
+.class-card.is-closed .class-card-title,
+.class-card.is-closed .seat-numbers {
+  opacity: 0.6;
+}
+
+.field-hint {
+  margin: -2px 0 4px;
+}
+
+/* ---------- Small screens: admin sidebar becomes a top bar ---------- */
+@media (max-width: 860px) {
+  .admin-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .side-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .side-switch {
+    margin-top: 0;
+    margin-left: auto;
+  }
+
+  .admin-main {
+    padding: 8px 16px 48px;
+  }
+
+  .hero {
+    padding: 22px;
   }
 }

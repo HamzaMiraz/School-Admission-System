@@ -55,12 +55,41 @@ describe('ClassesPage search and order', () => {
     await userEvent.selectOptions(screen.getByLabelText('Shift'), 'Day');
     expect(rowIds()).toEqual(['class-row-c_2d']);
 
-    await userEvent.click(screen.getByLabelText('Only show classes with free seats'));
+    await userEvent.click(screen.getByLabelText('Only show classes I can apply to'));
     expect(screen.queryAllByTestId(/^class-row-/)).toHaveLength(0);
     expect(screen.getByText(/No class matches your search/)).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Show all classes' }));
     expect(rowIds()).toHaveLength(4);
+  });
+});
+
+describe('ClassesPage application deadline', () => {
+  it('shows the deadline, and a class past it is closed for applying', async () => {
+    const soon = new Date(Date.now() + 3 * 24 * 3600_000).toISOString();
+    const past = new Date(Date.now() - 3600_000).toISOString();
+    fakeBackend((_, path) =>
+      path === '/me/holds'
+        ? json(200, [])
+        : json(200, [
+            { id: 'c_open', name: 'Class 1 - Morning Shift', totalSeats: 10, heldSeats: 0, confirmedSeats: 0, availableSeats: 10, applicationDeadline: soon, isOpen: true },
+            { id: 'c_closed', name: 'Class 2 - Morning Shift', totalSeats: 10, heldSeats: 0, confirmedSeats: 0, availableSeats: 10, applicationDeadline: past, isOpen: false },
+          ]),
+    );
+
+    renderPage(STUDENT_ID);
+
+    const open = within(await screen.findByTestId('class-row-c_open'));
+    expect(open.getByTestId('deadline')).toHaveTextContent(/^📅Apply by /);
+    expect(open.getByRole('button', { name: 'Apply' })).toBeEnabled();
+
+    const closed = within(screen.getByTestId('class-row-c_closed'));
+    expect(closed.getByTestId('deadline')).toHaveTextContent(/Closed on /);
+    expect(closed.getByText('Applications closed')).toBeInTheDocument();
+    expect(closed.getByRole('button', { name: 'Closed' })).toBeDisabled();
+
+    await userEvent.click(screen.getByLabelText('Only show classes I can apply to'));
+    expect(screen.queryByTestId('class-row-c_closed')).not.toBeInTheDocument();
   });
 });
 
@@ -89,8 +118,8 @@ describe('ClassesPage one class per student', () => {
     renderPage(STUDENT_ID);
 
     expect(await screen.findByText(/already applied for Class 6 - Morning Shift/)).toBeInTheDocument();
-    expect(within(screen.getByTestId('class-row-c_2')).getByRole('button', { name: 'আবেদন করুন' })).toBeDisabled();
-    expect(within(screen.getByTestId('class-row-c_1')).getByRole('button', { name: 'আবেদন করুন' })).toBeDisabled();
+    expect(within(screen.getByTestId('class-row-c_2')).getByRole('button', { name: 'Apply' })).toBeDisabled();
+    expect(within(screen.getByTestId('class-row-c_1')).getByRole('button', { name: 'Apply' })).toBeDisabled();
   });
 
   it('allows applying again once the earlier application is cancelled', async () => {
@@ -111,7 +140,7 @@ describe('ClassesPage one class per student', () => {
     renderPage(STUDENT_ID);
 
     const row = within(await screen.findByTestId('class-row-c_2'));
-    expect(row.getByRole('button', { name: 'আবেদন করুন' })).toBeEnabled();
+    expect(row.getByRole('button', { name: 'Apply' })).toBeEnabled();
     expect(screen.queryByText(/already applied/)).not.toBeInTheDocument();
   });
 });
@@ -126,7 +155,7 @@ describe('ClassesPage', () => {
     for (const value of ['120', '15', '80', '25']) {
       expect(within(morning).getByText(value)).toBeInTheDocument();
     }
-    expect(within(morning).getByRole('button', { name: 'আবেদন করুন' })).toBeEnabled();
+    expect(within(morning).getByRole('button', { name: 'Apply' })).toBeEnabled();
     expect(within(screen.getByTestId('class-row-c_2')).getByRole('button', { name: 'Full' })).toBeDisabled();
   });
 
@@ -138,7 +167,7 @@ describe('ClassesPage', () => {
     );
 
     renderPage(STUDENT_ID);
-    await userEvent.click(within(await screen.findByTestId('class-row-c_1')).getByRole('button', { name: 'আবেদন করুন' }));
+    await userEvent.click(within(await screen.findByTestId('class-row-c_1')).getByRole('button', { name: 'Apply' }));
 
     expect(await screen.findByText('Application page for this hold')).toBeInTheDocument();
   });
@@ -151,7 +180,7 @@ describe('ClassesPage', () => {
     );
 
     renderPage(STUDENT_ID);
-    await userEvent.click(within(await screen.findByTestId('class-row-c_1')).getByRole('button', { name: 'আবেদন করুন' }));
+    await userEvent.click(within(await screen.findByTestId('class-row-c_1')).getByRole('button', { name: 'Apply' }));
 
     expect(await screen.findByText(/all seats in Class 6 - Morning Shift are taken/)).toBeInTheDocument();
   });

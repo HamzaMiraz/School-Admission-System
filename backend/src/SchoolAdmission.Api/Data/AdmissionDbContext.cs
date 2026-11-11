@@ -19,6 +19,7 @@ public class AdmissionDbContext(DbContextOptions<AdmissionDbContext> options) : 
             e.Property(c => c.NormalizedName).HasColumnName("normalized_name").HasMaxLength(100).IsRequired();
             e.Property(c => c.TotalSeats).HasColumnName("total_seats");
             e.Property(c => c.CreatedAt).HasColumnName("created_at");
+            e.Property(c => c.ApplicationDeadline).HasColumnName("application_deadline");
             e.HasIndex(c => c.NormalizedName).IsUnique().HasDatabaseName("ux_classes_normalized_name");
         });
 

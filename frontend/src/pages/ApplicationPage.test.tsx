@@ -36,8 +36,8 @@ describe('ApplicationPage', () => {
 
     expect(await screen.findByText(/Seat held/)).toBeInTheDocument();
     expect(screen.getByTestId('countdown')).toHaveTextContent(/02:0[45]/);
-    expect(screen.getByRole('button', { name: 'ভর্তি ফি দিন' })).toBeEnabled();
-    expect(screen.getByRole('button', { name: 'বাতিল' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Pay admission fee' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Cancel application' })).toBeEnabled();
   });
 
   it('switches to EXPIRED and disables paying when the countdown ends, without a reload', async () => {
@@ -49,7 +49,7 @@ describe('ApplicationPage', () => {
     );
 
     renderPage();
-    const pay = await screen.findByRole('button', { name: 'ভর্তি ফি দিন' });
+    const pay = await screen.findByRole('button', { name: 'Pay admission fee' });
     expect(pay).toBeEnabled();
 
     await waitFor(() => expect(screen.getByText(/EXPIRED/)).toBeInTheDocument(), { timeout: 4000 });
@@ -68,11 +68,11 @@ describe('ApplicationPage', () => {
     });
 
     renderPage();
-    await userEvent.click(await screen.findByRole('button', { name: 'ভর্তি ফি দিন' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Pay admission fee' }));
 
     expect(await screen.findByText('Payment received. Admission is confirmed!')).toBeInTheDocument();
     expect(await screen.findByText(/Admission confirmed\./)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'ভর্তি ফি দিন' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Pay admission fee' })).toBeDisabled();
     const confirmCall = fetchMock.mock.calls.find(([, init]) => init?.method === 'POST');
     expect((confirmCall?.[1]?.headers as Record<string, string>)['X-Student-Id']).toBe(STUDENT_ID);
   });
@@ -85,7 +85,7 @@ describe('ApplicationPage', () => {
     );
 
     renderPage();
-    await userEvent.click(await screen.findByRole('button', { name: 'ভর্তি ফি দিন' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Pay admission fee' }));
 
     expect(await screen.findByText('The time to pay the admission fee has run out.')).toBeInTheDocument();
   });
@@ -101,8 +101,8 @@ describe('ApplicationPage', () => {
     });
 
     renderPage();
-    await userEvent.click(await screen.findByRole('button', { name: 'বাতিল' }));
-    await userEvent.click(screen.getByRole('button', { name: 'হ্যাঁ, বাতিল করুন' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Cancel application' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Yes, cancel' }));
 
     expect(await screen.findByText(/Application cancelled/)).toBeInTheDocument();
     expect(await screen.findByText('This application was cancelled.')).toBeInTheDocument();

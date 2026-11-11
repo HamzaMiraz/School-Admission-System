@@ -30,7 +30,7 @@ describe('user panel sign-in', () => {
     await userEvent.type(screen.getByLabelText(/birth registration number/i), STUDENT_ID);
     await userEvent.click(screen.getByRole('button', { name: 'Sign in' }));
 
-    expect(screen.getByRole('heading', { name: 'Class তালিকা' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Classes' })).toBeInTheDocument();
     expect(screen.getByText(STUDENT_ID)).toBeInTheDocument();
     expect(localStorage.getItem('school-admission.studentId')).toBe(STUDENT_ID);
 
@@ -42,13 +42,13 @@ describe('user panel sign-in', () => {
   it('after signing out on another page, the next student starts on Classes', async () => {
     fakeBackend((_, path) => json(200, path === '/classes' ? classes : []));
     renderApp(<App />, { route: '/applications', studentId: STUDENT_ID });
-    expect(screen.getByRole('heading', { name: 'আমার আবেদন' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'My applications' })).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Sign out' }));
     await userEvent.type(screen.getByLabelText(/birth registration number/i), '20159999999999999');
     await userEvent.click(screen.getByRole('button', { name: 'Sign in' }));
 
-    expect(screen.getByRole('heading', { name: 'Class তালিকা' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Classes' })).toBeInTheDocument();
     expect(screen.getByText('20159999999999999')).toBeInTheDocument();
   });
 
@@ -58,9 +58,9 @@ describe('user panel sign-in', () => {
     renderApp(<App />, { route: '/', studentId: STUDENT_ID });
 
     const nav = screen.getByRole('navigation');
-    expect(within(nav).getByRole('link', { name: 'Class তালিকা' })).toBeInTheDocument();
-    expect(within(nav).getByRole('link', { name: 'আমার আবেদন' })).toBeInTheDocument();
-    expect(within(nav).queryByRole('link', { name: 'Class তৈরি' })).not.toBeInTheDocument();
+    expect(within(nav).getByRole('link', { name: 'Classes' })).toBeInTheDocument();
+    expect(within(nav).getByRole('link', { name: 'My applications' })).toBeInTheDocument();
+    expect(within(nav).queryByRole('link', { name: 'Create class' })).not.toBeInTheDocument();
   });
 });
 
@@ -72,7 +72,7 @@ describe('admin panel', () => {
 
     expect(screen.getByText(/Admin Panel/)).toBeInTheDocument();
     const nav = screen.getByRole('navigation');
-    for (const name of ['Overview', 'Applications', 'Class তৈরি']) {
+    for (const name of ['Overview', 'Applications', 'Create class']) {
       expect(within(nav).getByRole('link', { name })).toBeInTheDocument();
     }
     expect(screen.queryByRole('button', { name: 'Sign out' })).not.toBeInTheDocument();

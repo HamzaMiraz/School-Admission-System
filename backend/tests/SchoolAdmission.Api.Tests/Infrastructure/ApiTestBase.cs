@@ -3,7 +3,15 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace SchoolAdmission.Api.Tests.Infrastructure;
 
-public sealed record ClassDto(string Id, string Name, int TotalSeats, int HeldSeats, int ConfirmedSeats, int AvailableSeats);
+public sealed record ClassDto(
+    string Id,
+    string Name,
+    int TotalSeats,
+    int HeldSeats,
+    int ConfirmedSeats,
+    int AvailableSeats,
+    DateTimeOffset? ApplicationDeadline = null,
+    bool IsOpen = true);
 
 public sealed record HoldDto(
     string HoldId,

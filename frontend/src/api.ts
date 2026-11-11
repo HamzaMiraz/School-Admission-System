@@ -9,6 +9,10 @@ export interface SchoolClass {
   heldSeats: number;
   confirmedSeats: number;
   availableSeats: number;
+  /** Last moment new applications are accepted; null/absent = no deadline. */
+  applicationDeadline?: string | null;
+  /** False once the deadline has passed. */
+  isOpen?: boolean;
 }
 
 export interface Hold {
@@ -100,8 +104,8 @@ async function request<T>(method: string, path: string, options: RequestOptions 
 export const api = {
   listClasses: () => request<SchoolClass[]>('GET', '/classes'),
   getClass: (classId: string) => request<SchoolClass>('GET', `/classes/${encodeURIComponent(classId)}`),
-  createClass: (name: string, totalSeats: number) =>
-    request<SchoolClass>('POST', '/classes', { body: { name, totalSeats } }),
+  createClass: (name: string, totalSeats: number, applicationDeadline?: string) =>
+    request<SchoolClass>('POST', '/classes', { body: { name, totalSeats, applicationDeadline } }),
   applyForSeat: (classId: string, studentId: string) =>
     request<Hold>('POST', `/classes/${encodeURIComponent(classId)}/holds`, { studentId }),
   getHold: (holdId: string) => request<Hold>('GET', `/holds/${encodeURIComponent(holdId)}`),

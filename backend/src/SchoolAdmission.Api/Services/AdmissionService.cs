@@ -41,6 +41,13 @@ public sealed class AdmissionService(AdmissionDbContext db, TimeProvider clock, 
                 $"Total seats must be a whole number between 1 and {MaxTotalSeats}.");
         }
 
+        var now = clock.GetUtcNow();
+        var deadline = request.ApplicationDeadline?.ToUniversalTime();
+        if (deadline is not null && deadline <= now)
+        {
+            throw ApiException.BadRequest("INVALID_DEADLINE", "The application deadline must be in the future.");
+        }
+
         var normalizedName = SchoolClass.NormalizeName(name);
         if (await db.Classes.AnyAsync(c => c.NormalizedName == normalizedName, ct))
         {
@@ -53,7 +60,8 @@ public sealed class AdmissionService(AdmissionDbContext db, TimeProvider clock, 
             Name = name,
             NormalizedName = normalizedName,
             TotalSeats = totalSeats,
-            CreatedAt = clock.GetUtcNow(),
+            CreatedAt = now,
+            ApplicationDeadline = deadline,
         };
         db.Classes.Add(schoolClass);
 
@@ -66,7 +74,7 @@ public sealed class AdmissionService(AdmissionDbContext db, TimeProvider clock, 
             throw DuplicateClassName(name);
         }
 
-        return new ClassResponse(schoolClass.Id, schoolClass.Name, totalSeats, 0, 0, totalSeats);
+        return new ClassResponse(schoolClass.Id, schoolClass.Name, totalSeats, 0, 0, totalSeats, deadline, true);
     }
 
     public async Task<IReadOnlyList<ClassResponse>> ListClassesAsync(CancellationToken ct) =>
@@ -96,6 +104,13 @@ public sealed class AdmissionService(AdmissionDbContext db, TimeProvider clock, 
 
         // Read the clock only after the lock is ours, so "now" is ordered with other writers.
         var now = clock.GetUtcNow();
+
+        if (!schoolClass.IsOpenForApplications(now))
+        {
+            throw ApiException.Conflict("APPLICATIONS_CLOSED",
+                $"Applications for {schoolClass.Name} are closed: the deadline was " +
+                $"{schoolClass.ApplicationDeadline:yyyy-MM-dd HH:mm} UTC.");
+        }
 
         // This student's own timed-out hold may not be swept yet; retire it so the
         // one-active-hold-per-class unique index does not block re-applying.
@@ -327,11 +342,13 @@ public sealed class AdmissionService(AdmissionDbContext db, TimeProvider clock, 
                 c.Id,
                 c.Name,
                 c.TotalSeats,
+                c.ApplicationDeadline,
                 Held = db.Holds.Count(h => h.ClassId == c.Id && h.Status == HoldStatus.Held && h.ExpiresAt > now),
                 Confirmed = db.Holds.Count(h => h.ClassId == c.Id && h.Status == HoldStatus.Confirmed),
             })
             .Select(c => new ClassResponse(
-                c.Id, c.Name, c.TotalSeats, c.Held, c.Confirmed, c.TotalSeats - c.Held - c.Confirmed));
+                c.Id, c.Name, c.TotalSeats, c.Held, c.Confirmed, c.TotalSeats - c.Held - c.Confirmed,
+                c.ApplicationDeadline, c.ApplicationDeadline == null || c.ApplicationDeadline > now));
     }
 
     private async Task<Hold> LockHoldAsync(string holdId, CancellationToken ct) =>

@@ -9,7 +9,7 @@ in time the seat is released automatically.
 - **Everything runs with Docker** — only Docker is needed on the machine.
 - **Screenshots of both panels:** [docs/UI.md](docs/UI.md)
 
-![Class তালিকা](docs/screenshots/02-class-list.png)
+![Classes](docs/screenshots/02-class-list.png)
 
 ## Run it
 
@@ -33,10 +33,10 @@ together; the database tables are created automatically. Then open:
 
 ### First steps (the database starts empty)
 
-1. Open the **Admin panel** → **Class তৈরি** → choose e.g. *Class 6* + *Morning Shift*, enter
-   *120* seats → **Class তৈরি করুন**. Add as many classes as you like.
+1. Open the **Admin panel** → **Create class** → choose e.g. *Class 6* + *Morning Shift*, enter
+   *120* seats and an **application deadline** → **Create class**. Add as many classes as you like.
 2. Open the **User panel** → sign in with any 17-digit number, e.g. `20152691234567890`.
-3. **Class তালিকা** → pick a class → **আবেদন করুন** → **ভর্তি ফি দিন** (or **বাতিল**).
+3. **Classes** → pick a class → **Apply** → **Pay admission fee** (or **Cancel application**).
 4. Back in the Admin panel → **Applications** to see who applied for which class and shift, and
    who has paid.
 
@@ -65,10 +65,11 @@ The UI has two panels.
 
 **Admin panel** — http://localhost:3000/admin (school admin)
 
-- **Overview**: seat totals and every class's total / on hold / confirmed / available seats, live.
+- **Overview**: seat totals and every class's seats and application deadline (Open / Closed), live.
 - **Applications**: every application — student's birth registration number, class, shift, when
   they applied, status and whether the fee is paid. Filter by status, class/shift or student.
-- **Class তৈরি**: choose the class (1–10) and the shift (Morning / Day), enter the seats,
+- **Create class**: choose the class (1–10) and the shift (Morning / Day), enter the seats and the
+  **application deadline** (after it the class closes for new applications),
   e.g. Class 6 + Morning Shift + 120. Every shift is its own class.
 
 **User panel** — http://localhost:3000 (parents)
@@ -76,14 +77,14 @@ The UI has two panels.
 1. **Sign in** with the student's **17-digit birth registration number** (no password; Bangla
    digits are accepted). The browser remembers it until **Sign out**. To try several students,
    sign out and sign in with another number, or use another browser / private window.
-2. **Class তালিকা**: one card per class and shift, in order (Class 1 → 10, Morning before Day), with a
-   seat bar and মোট / hold-এ থাকা / নিশ্চিত / খালি seat (refreshes every 3 s). Search by class and
-   shift, or show only classes with free seats. Each card says **Available** or **Full**; **আবেদন করুন**
-   works only when seats are free. A student can apply for only one class at a time.
-3. **আবেদন** page: অবস্থা (status), মেয়াদ শেষ হতে বাকি (live countdown), **ভর্তি ফি দিন** (payment
-   is simulated and always succeeds — no real payment gateway) and **বাতিল**. When the countdown ends the page shows EXPIRED and
+2. **Classes**: one card per class and shift, in order (Class 1 → 10, Morning before Day), with the
+   application deadline, a seat bar and total / on hold / confirmed / free seats (refreshes every 3 s).
+   Search by class and shift, or show only classes you can apply to. Each card says **Available**,
+   **Full** or **Applications closed**; **Apply** works only when the class is open and has free seats. A student can apply for only one class at a time.
+3. **Application** page: status, live countdown, **Pay admission fee** (payment is simulated and
+   always succeeds — no real payment gateway) and **Cancel application**. When the countdown ends the page shows EXPIRED and
    paying is disabled — no reload needed.
-4. **আমার আবেদন**: every application of the current student and its status.
+4. **My applications**: every application of the current student and its status.
 
 ### Configuration (environment variables)
 
@@ -103,8 +104,8 @@ Example: `HOLD_DURATION_SECONDS=60 docker compose up` (PowerShell: `$env:HOLD_DU
 With Docker only:
 
 ```bash
-docker compose --profile test run --rm backend-tests    # 38 xUnit tests against a real PostgreSQL
-docker compose --profile test run --rm frontend-tests   # 36 Vitest + Testing Library tests
+docker compose --profile test run --rm backend-tests    # 43 xUnit tests against a real PostgreSQL
+docker compose --profile test run --rm frontend-tests   # 38 Vitest + Testing Library tests
 ```
 
 Without Docker (needs .NET 10 SDK / Node 20.19+ and a PostgreSQL server):
@@ -139,7 +140,7 @@ Base URL `http://localhost:8080`. Student identity: header `X-Student-Id` (17 di
 
 | # | Method & path | Purpose | Success |
 | - | --- | --- | --- |
-| 1 | `POST /classes` `{ "name", "totalSeats" }` | Create class | `201` |
+| 1 | `POST /classes` `{ "name", "totalSeats", "applicationDeadline"? }` | Create class (`applicationDeadline` is optional, ISO date-time) | `201` |
 | 2 | `GET /classes` | All classes with seat counts | `200` |
 | 3 | `GET /classes/{classId}` | One class's seat counts | `200` |
 | 4 | `POST /classes/{classId}/holds` + `X-Student-Id` | Apply (hold a seat) | `201` |
@@ -151,7 +152,7 @@ Base URL `http://localhost:8080`. Student identity: header `X-Student-Id` (17 di
 
 Errors are JSON: `{ "error": "NO_SEATS_AVAILABLE", "message": "Sorry, all seats …" }`.
 Codes: `400` invalid input, `403` someone else's application, `404` unknown id,
-`409` no seats / already applied / expired / cancelled / already confirmed.
+`409` no seats / applications closed / already applied / expired / cancelled / already confirmed.
 
 ## Project layout
 

@@ -4,7 +4,8 @@ namespace SchoolAdmission.Api.Api;
 
 // Fields are nullable so missing values reach our validation (and a clear 400)
 // instead of silently defaulting to "" / 0.
-public sealed record CreateClassRequest(string? Name, int? TotalSeats);
+// ApplicationDeadline is optional (not in the brief): without it the class stays open.
+public sealed record CreateClassRequest(string? Name, int? TotalSeats, DateTimeOffset? ApplicationDeadline = null);
 
 public sealed record ClassResponse(
     string Id,
@@ -12,7 +13,9 @@ public sealed record ClassResponse(
     int TotalSeats,
     int HeldSeats,
     int ConfirmedSeats,
-    int AvailableSeats);
+    int AvailableSeats,
+    DateTimeOffset? ApplicationDeadline,
+    bool IsOpen);
 
 public sealed record HoldResponse(
     string HoldId,

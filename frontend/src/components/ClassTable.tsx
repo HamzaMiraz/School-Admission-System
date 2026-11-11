@@ -1,66 +1,50 @@
 import type { SchoolClass } from '../api';
+import { useNow } from '../hooks/useNow';
 import { compareClassNames } from '../lib/classNames';
+import { formatDeadline, isClassOpen } from '../lib/deadline';
 
-interface Props {
-  classes: SchoolClass[];
-  /** When given, each row gets an "Apply" button. */
-  onApply?: (schoolClass: SchoolClass) => void;
-  applyDisabledReason?: string;
-  applyingClassId?: string;
-}
-
-export function ClassTable({ classes, onApply, applyDisabledReason, applyingClassId }: Props) {
+/** Admin view of the classes: seats and application deadline, sorted Class 1 → 10. */
+export function ClassTable({ classes }: { classes: SchoolClass[] }) {
+  const now = useNow(1000);
   return (
     <div className="table-wrap">
       <table className="table">
         <thead>
           <tr>
             <th>Class</th>
-            <th className="num">মোট</th>
-            <th className="num">hold-এ থাকা</th>
-            <th className="num">নিশ্চিত</th>
-            <th className="num">খালি seat</th>
-            {onApply && <th>Availability</th>}
-            {onApply && <th aria-label="Actions" />}
+            <th className="num">Total seats</th>
+            <th className="num">On hold</th>
+            <th className="num">Confirmed</th>
+            <th className="num">Available</th>
+            <th>Application deadline</th>
           </tr>
         </thead>
         <tbody>
-          {[...classes].sort((a, b) => compareClassNames(a.name, b.name)).map((c) => {
-            const full = c.availableSeats <= 0;
-            return (
-              <tr key={c.id} data-testid={`class-row-${c.id}`}>
-                <td>{c.name}</td>
-                <td className="num">{c.totalSeats}</td>
-                <td className="num">{c.heldSeats}</td>
-                <td className="num">{c.confirmedSeats}</td>
-                <td className={`num ${full ? 'text-danger' : 'text-success'}`}>
-                  <strong>{c.availableSeats}</strong>
-                </td>
-                {onApply && (
+          {[...classes]
+            .sort((a, b) => compareClassNames(a.name, b.name))
+            .map((c) => {
+              const full = c.availableSeats <= 0;
+              const open = isClassOpen(c, now);
+              return (
+                <tr key={c.id} data-testid={`class-row-${c.id}`}>
+                  <td>{c.name}</td>
+                  <td className="num">{c.totalSeats}</td>
+                  <td className="num">{c.heldSeats}</td>
+                  <td className="num">{c.confirmedSeats}</td>
+                  <td className={`num ${full ? 'text-danger' : 'text-success'}`}>
+                    <strong>{c.availableSeats}</strong>
+                  </td>
                   <td>
-                    {full ? (
-                      <span className="badge badge-cancelled">Full — cannot apply</span>
+                    {c.applicationDeadline ? formatDeadline(c.applicationDeadline) : <span className="muted">None</span>}{' '}
+                    {open ? (
+                      <span className="badge badge-confirmed">Open</span>
                     ) : (
-                      <span className="badge badge-confirmed">Available</span>
+                      <span className="badge badge-expired">Closed</span>
                     )}
                   </td>
-                )}
-                {onApply && (
-                  <td className="actions">
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      disabled={full || !!applyDisabledReason || applyingClassId !== undefined}
-                      title={full ? 'No seats available right now' : applyDisabledReason}
-                      onClick={() => onApply(c)}
-                    >
-                      {applyingClassId === c.id ? 'আবেদন হচ্ছে…' : full ? 'Full' : 'আবেদন করুন'}
-                    </button>
-                  </td>
-                )}
-              </tr>
-            );
-          })}
+                </tr>
+              );
+            })}
         </tbody>
       </table>
     </div>

@@ -15,5 +15,10 @@ public class SchoolClass
     public int TotalSeats { get; set; }
     public DateTimeOffset CreatedAt { get; init; }
 
+    /// <summary>Last moment new applications are accepted. Null = no deadline (always open).</summary>
+    public DateTimeOffset? ApplicationDeadline { get; init; }
+
+    public bool IsOpenForApplications(DateTimeOffset now) => ApplicationDeadline is null || ApplicationDeadline > now;
+
     public static string NormalizeName(string name) => name.Trim().ToUpperInvariant();
 }
