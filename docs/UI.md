@@ -65,8 +65,8 @@ The layout adapts to small screens.
 
 ## Admin panel
 
-The admin panel has its own **dark theme** and a sidebar with **Overview**, **Applications** and
-**Create class**, so it is easy to tell apart from the bright user panel.
+The admin panel has a sidebar with **Overview**, **Applications** and **Create class**. Both panels
+use a dark theme; the admin panel has a cyan/indigo accent, the user panel a violet/pink one.
 
 ### Overview
 

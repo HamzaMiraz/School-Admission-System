@@ -42,7 +42,7 @@ function UserLayout() {
   };
 
   return (
-    <div className="app">
+    <div className="app user-shell theme-dark">
       <header className="header">
         <div className="container header-inner">
           <Link to="/" className="brand">
@@ -80,7 +80,7 @@ function UserLayout() {
 /** School admin's panel. No login (the brief asks for none). */
 function AdminLayout() {
   return (
-    <div className="admin-shell">
+    <div className="admin-shell theme-dark">
       <aside className="sidebar">
         <Link to="/admin" className="brand">
           <span className="brand-logo">🛠️</span>

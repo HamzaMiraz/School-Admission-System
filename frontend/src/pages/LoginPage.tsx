@@ -29,7 +29,7 @@ export function LoginPage() {
   };
 
   return (
-    <div className="login-page">
+    <div className="login-page theme-dark">
       <form className="card login-card" onSubmit={submit} noValidate>
         <div className="login-logo" aria-hidden>
           🏫
