@@ -7,6 +7,9 @@ in time the seat is released automatically.
 - **Backend:** ASP.NET Core (.NET 10) minimal API, EF Core, PostgreSQL — [backend/](backend/)
 - **Frontend:** React 19 + TypeScript + Vite — [frontend/](frontend/)
 - **Everything runs with Docker** — only Docker is needed on the machine.
+- **Screenshots of both panels:** [docs/UI.md](docs/UI.md)
+
+![Class তালিকা](docs/screenshots/02-class-list.png)
 
 ## Run it
 

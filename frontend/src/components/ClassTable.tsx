@@ -1,4 +1,5 @@
 import type { SchoolClass } from '../api';
+import { compareClassNames } from '../lib/classNames';
 
 interface Props {
   classes: SchoolClass[];
@@ -24,7 +25,7 @@ export function ClassTable({ classes, onApply, applyDisabledReason, applyingClas
           </tr>
         </thead>
         <tbody>
-          {classes.map((c) => {
+          {[...classes].sort((a, b) => compareClassNames(a.name, b.name)).map((c) => {
             const full = c.availableSeats <= 0;
             return (
               <tr key={c.id} data-testid={`class-row-${c.id}`}>

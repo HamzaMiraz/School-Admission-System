@@ -585,16 +585,25 @@ section > p.muted:first-of-type {
 
 .seat-numbers {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 12px;
   margin: 0;
 }
 
+.seat-numbers > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+
 .seat-numbers dt {
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  white-space: nowrap;
 }
 
 .seat-numbers .text-success dt,
@@ -680,12 +689,11 @@ section > p.muted:first-of-type {
   border-bottom: 1px solid var(--border);
   text-align: left;
   vertical-align: middle;
+  white-space: nowrap;
 }
 
 .table th {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-size: 0.8rem;
   color: var(--muted);
   font-weight: 650;
   background: var(--surface-2);

@@ -118,9 +118,12 @@ export function AdminApplicationsPage() {
                         </td>
                         <td>
                           {status === 'CONFIRMED' ? (
-                            <span className="text-success">
-                              ✔ Paid{hold.confirmedAt ? ` · ${formatDateTime(hold.confirmedAt)}` : ''}
-                            </span>
+                            <>
+                              <span className="text-success">✔ Paid</span>
+                              {hold.confirmedAt && (
+                                <div className="muted small">{formatDateTime(hold.confirmedAt)}</div>
+                              )}
+                            </>
                           ) : status === 'HELD' ? (
                             <span>Not paid yet · {formatDuration(deadline - now)} left</span>
                           ) : (
