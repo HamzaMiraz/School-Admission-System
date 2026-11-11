@@ -69,7 +69,7 @@ export function ClassesPage() {
 
   return (
     <section>
-      <h1>Classes</h1>
+      <h1>Class তালিকা</h1>
       <p className="muted">
         Seats are given first come, first served. Applying holds a seat for a limited time; pay the admission fee
         before the time runs out to confirm admission. Counts update automatically.

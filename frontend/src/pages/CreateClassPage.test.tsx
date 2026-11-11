@@ -27,7 +27,7 @@ describe('CreateClassPage', () => {
     await userEvent.selectOptions(screen.getByLabelText('Class'), '7');
     await userEvent.selectOptions(screen.getByLabelText('Shift'), 'Day');
     await userEvent.type(screen.getByLabelText('Total seats'), '80');
-    await userEvent.click(screen.getByRole('button', { name: 'Create class' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Class তৈরি করুন' }));
 
     expect(await screen.findByText('Created "Class 7 - Day Shift" with 80 seats.')).toBeInTheDocument();
     const post = fetchMock.mock.calls.find(([, init]) => init?.method === 'POST');
@@ -40,7 +40,7 @@ describe('CreateClassPage', () => {
     renderApp(<CreateClassPage />);
     await userEvent.selectOptions(screen.getByLabelText('Class'), '3');
     await userEvent.type(screen.getByLabelText('Total seats'), '50');
-    await userEvent.click(screen.getByRole('button', { name: 'Create class' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Class তৈরি করুন' }));
 
     expect(screen.getByText('Please choose a shift.')).toBeInTheDocument();
   });

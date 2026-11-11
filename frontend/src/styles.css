@@ -785,6 +785,22 @@ section > p.muted:first-of-type {
   margin: 0;
 }
 
+.eyebrow {
+  margin: 1.75rem 0 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--primary);
+}
+
+.eyebrow + h1 {
+  margin-top: 0.15rem;
+}
+
+.payment-note {
+  margin: 12px 0 0;
+}
+
 .countdown {
   display: inline-block;
   padding: 6px 16px;

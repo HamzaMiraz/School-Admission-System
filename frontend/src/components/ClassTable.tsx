@@ -15,10 +15,10 @@ export function ClassTable({ classes, onApply, applyDisabledReason, applyingClas
         <thead>
           <tr>
             <th>Class</th>
-            <th className="num">Total seats</th>
-            <th className="num">On hold</th>
-            <th className="num">Confirmed</th>
-            <th className="num">Available</th>
+            <th className="num">মোট</th>
+            <th className="num">hold-এ থাকা</th>
+            <th className="num">নিশ্চিত</th>
+            <th className="num">খালি seat</th>
             {onApply && <th>Availability</th>}
             {onApply && <th aria-label="Actions" />}
           </tr>
@@ -53,7 +53,7 @@ export function ClassTable({ classes, onApply, applyDisabledReason, applyingClas
                       title={full ? 'No seats available right now' : applyDisabledReason}
                       onClick={() => onApply(c)}
                     >
-                      {applyingClassId === c.id ? 'Applying…' : full ? 'Full' : 'Apply'}
+                      {applyingClassId === c.id ? 'আবেদন হচ্ছে…' : full ? 'Full' : 'আবেদন করুন'}
                     </button>
                   </td>
                 )}

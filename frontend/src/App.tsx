@@ -51,9 +51,9 @@ function UserLayout() {
           </Link>
           <nav className="nav">
             <NavLink to="/" end>
-              Classes
+              Class তালিকা
             </NavLink>
-            <NavLink to="/applications">My applications</NavLink>
+            <NavLink to="/applications">আমার আবেদন</NavLink>
           </nav>
           <div className="user-box">
             <span className="user-id" title="Signed in with this birth registration number">
@@ -92,7 +92,7 @@ function AdminLayout() {
               Overview
             </NavLink>
             <NavLink to="/admin/applications">Applications</NavLink>
-            <NavLink to="/admin/create">Create class</NavLink>
+            <NavLink to="/admin/create">Class তৈরি</NavLink>
             <Link to="/" className="nav-switch">
               ← User panel
             </Link>

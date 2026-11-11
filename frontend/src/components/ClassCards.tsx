@@ -38,19 +38,19 @@ export function ClassCards({ classes, onApply, applyDisabledReason, applyingClas
 
             <dl className="seat-numbers">
               <div>
-                <dt>Total</dt>
+                <dt>মোট</dt>
                 <dd>{c.totalSeats}</dd>
               </div>
               <div>
-                <dt>On hold</dt>
+                <dt>hold-এ থাকা</dt>
                 <dd>{c.heldSeats}</dd>
               </div>
               <div>
-                <dt>Confirmed</dt>
+                <dt>নিশ্চিত</dt>
                 <dd>{c.confirmedSeats}</dd>
               </div>
               <div className={full ? 'text-danger' : 'text-success'}>
-                <dt>Free seats</dt>
+                <dt>খালি seat</dt>
                 <dd>{c.availableSeats}</dd>
               </div>
             </dl>
@@ -68,7 +68,7 @@ export function ClassCards({ classes, onApply, applyDisabledReason, applyingClas
                 title={full ? 'No seats available right now' : applyDisabledReason}
                 onClick={() => onApply(c)}
               >
-                {applyingClassId === c.id ? 'Applying…' : full ? 'Full' : 'Apply'}
+                {applyingClassId === c.id ? 'আবেদন হচ্ছে…' : full ? 'Full' : 'আবেদন করুন'}
               </button>
             </footer>
           </article>

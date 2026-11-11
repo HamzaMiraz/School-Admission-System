@@ -35,7 +35,7 @@ export function ApplicationPage() {
     if (hold.error instanceof ApiError && hold.error.status === 404) {
       return (
         <section>
-          <h1>Application</h1>
+          <h1>আবেদন</h1>
           <Alert kind="error">This application could not be found.</Alert>
           <Link to="/applications">Go to my applications</Link>
         </section>
@@ -43,7 +43,7 @@ export function ApplicationPage() {
     }
     return (
       <section>
-        <h1>Application</h1>
+        <h1>আবেদন</h1>
         {hold.error ? <Alert kind="error">{errorMessage(hold.error)}</Alert> : <Loading />}
       </section>
     );
@@ -76,21 +76,22 @@ export function ApplicationPage() {
   return (
     <section>
       <p>
-        <Link to="/applications">← My applications</Link>
+        <Link to="/applications">← আমার আবেদন</Link>
       </p>
-      <h1>{data.className ?? 'Application'}</h1>
+      <p className="eyebrow">আবেদন</p>
+      <h1>{data.className ?? data.classId}</h1>
       <StaleDataWarning error={hold.error} />
       {feedback && <Alert kind={feedback.kind}>{feedback.text}</Alert>}
 
       <div className="card">
         <dl className="details">
-          <dt>Status</dt>
+          <dt>অবস্থা</dt>
           <dd>
             <StatusBadge status={status!} />
           </dd>
           {isHeld && (
             <>
-              <dt>Time left to pay</dt>
+              <dt>মেয়াদ শেষ হতে বাকি</dt>
               <dd>
                 <span className="countdown mono" data-testid="countdown">
                   {formatDuration(deadline - now)}
@@ -134,17 +135,17 @@ export function ApplicationPage() {
             disabled={!isHeld || actionBlocked}
             onClick={() => void run('pay')}
           >
-            {busy === 'pay' ? 'Paying…' : 'Pay admission fee'}
+            {busy === 'pay' ? 'ফি জমা হচ্ছে…' : 'ভর্তি ফি দিন'}
           </button>
 
           {askingToCancel ? (
             <span className="confirm-inline">
               Cancel this application and release the seat?
               <button type="button" className="btn btn-danger" disabled={actionBlocked} onClick={() => void run('cancel')}>
-                Yes, cancel
+                হ্যাঁ, বাতিল করুন
               </button>
               <button type="button" className="btn" onClick={() => setAskingToCancel(false)}>
-                No, keep it
+                না, রেখে দিন
               </button>
             </span>
           ) : (
@@ -154,10 +155,15 @@ export function ApplicationPage() {
               disabled={!isHeld || actionBlocked}
               onClick={() => setAskingToCancel(true)}
             >
-              {busy === 'cancel' ? 'Cancelling…' : 'Cancel application'}
+              {busy === 'cancel' ? 'বাতিল হচ্ছে…' : 'বাতিল'}
             </button>
           )}
         </div>
+        {isHeld && (
+          <p className="muted small payment-note">
+            "ভর্তি ফি দিন" চাপলে payment সফল হয়েছে বলে ধরা হবে — আসল payment gateway নেই।
+          </p>
+        )}
       </div>
     </section>
   );

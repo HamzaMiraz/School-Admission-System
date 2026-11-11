@@ -11,7 +11,7 @@ export function MyApplicationsPage() {
   const { studentId } = useStudent();
   return (
     <section>
-      <h1>My applications</h1>
+      <h1>আমার আবেদন</h1>
       {studentId ? (
         <ApplicationsList studentId={studentId} />
       ) : (
@@ -45,8 +45,8 @@ function ApplicationsList({ studentId }: { studentId: string }) {
           <thead>
             <tr>
               <th>Class</th>
-              <th>Status</th>
-              <th>Time left</th>
+              <th>অবস্থা</th>
+              <th>মেয়াদ শেষ হতে বাকি</th>
               <th>Expires at</th>
               <th aria-label="Actions" />
             </tr>
@@ -65,7 +65,7 @@ function ApplicationsList({ studentId }: { studentId: string }) {
                   <td>{formatDateTime(hold.expiresAt)}</td>
                   <td className="actions">
                     <Link className="btn" to={`/applications/${hold.holdId}`}>
-                      {status === 'HELD' ? 'Pay / cancel' : 'Details'}
+                      {status === 'HELD' ? 'ভর্তি ফি দিন / বাতিল' : 'বিস্তারিত'}
                     </Link>
                   </td>
                 </tr>

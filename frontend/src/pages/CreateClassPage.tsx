@@ -48,7 +48,7 @@ export function CreateClassPage() {
 
   return (
     <section>
-      <h1>Create class</h1>
+      <h1>Class তৈরি</h1>
       <p className="muted">
         Choose the class and the shift. Each shift is admitted separately with its own seats — e.g. "Class 6 - Morning
         Shift" and "Class 6 - Day Shift".
@@ -93,7 +93,7 @@ export function CreateClassPage() {
         {feedback && <Alert kind={feedback.kind}>{feedback.text}</Alert>}
         <div>
           <button type="submit" className="btn btn-primary" disabled={saving}>
-            {saving ? 'Creating…' : 'Create class'}
+            {saving ? 'তৈরি হচ্ছে…' : 'Class তৈরি করুন'}
           </button>
         </div>
       </form>

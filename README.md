@@ -30,10 +30,10 @@ together; the database tables are created automatically. Then open:
 
 ### First steps (the database starts empty)
 
-1. Open the **Admin panel** → **Create class** → choose e.g. *Class 6* + *Morning Shift*, enter
-   *120* seats → **Create class**. Add as many classes as you like.
+1. Open the **Admin panel** → **Class তৈরি** → choose e.g. *Class 6* + *Morning Shift*, enter
+   *120* seats → **Class তৈরি করুন**. Add as many classes as you like.
 2. Open the **User panel** → sign in with any 17-digit number, e.g. `20152691234567890`.
-3. Pick a class → **Apply** → **Pay admission fee** (or **Cancel application**).
+3. **Class তালিকা** → pick a class → **আবেদন করুন** → **ভর্তি ফি দিন** (or **বাতিল**).
 4. Back in the Admin panel → **Applications** to see who applied for which class and shift, and
    who has paid.
 
@@ -65,7 +65,7 @@ The UI has two panels.
 - **Overview**: seat totals and every class's total / on hold / confirmed / available seats, live.
 - **Applications**: every application — student's birth registration number, class, shift, when
   they applied, status and whether the fee is paid. Filter by status, class/shift or student.
-- **Create class**: choose the class (1–10) and the shift (Morning / Day), enter the seats,
+- **Class তৈরি**: choose the class (1–10) and the shift (Morning / Day), enter the seats,
   e.g. Class 6 + Morning Shift + 120. Every shift is its own class.
 
 **User panel** — http://localhost:3000 (parents)
@@ -73,14 +73,14 @@ The UI has two panels.
 1. **Sign in** with the student's **17-digit birth registration number** (no password; Bangla
    digits are accepted). The browser remembers it until **Sign out**. To try several students,
    sign out and sign in with another number, or use another browser / private window.
-2. **Classes**: one card per class and shift, in order (Class 1 → 10, Morning before Day), with a
-   seat bar and total / on hold / confirmed / free seats (refreshes every 3 s). Search by class and
-   shift, or show only classes with free seats. Each card says **Available** or **Full**; **Apply**
+2. **Class তালিকা**: one card per class and shift, in order (Class 1 → 10, Morning before Day), with a
+   seat bar and মোট / hold-এ থাকা / নিশ্চিত / খালি seat (refreshes every 3 s). Search by class and
+   shift, or show only classes with free seats. Each card says **Available** or **Full**; **আবেদন করুন**
    works only when seats are free. A student can apply for only one class at a time.
-3. **Application** page: status, live countdown, **Pay admission fee** (payment is simulated and
-   always succeeds) and **Cancel application**. When the countdown ends the page shows EXPIRED and
+3. **আবেদন** page: অবস্থা (status), মেয়াদ শেষ হতে বাকি (live countdown), **ভর্তি ফি দিন** (payment
+   is simulated and always succeeds — no real payment gateway) and **বাতিল**. When the countdown ends the page shows EXPIRED and
    paying is disabled — no reload needed.
-4. **My applications**: every application of the current student and its status.
+4. **আমার আবেদন**: every application of the current student and its status.
 
 ### Configuration (environment variables)
 
