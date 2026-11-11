@@ -29,6 +29,9 @@ Where the brief was silent, these are the choices I made and why.
 - `X-Student-Id` must be exactly **17 digits** (birth registration number); otherwise `400`.
   It is required on endpoints 4, 6, 7, 8 (as in the brief). `GET /holds/{id}` does not require it;
   hold ids are random UUIDs, so they can't be guessed.
+- The school admits **Class 1 – Class 10**, in a **Morning** or **Day** shift. The "Create class"
+  screen offers these as dropdowns and sends the name as `"Class 6 - Morning Shift"`. The API itself
+  still accepts any name, so the contract in the brief (`name` + `totalSeats`) is unchanged.
 - There is no login, so **anyone can use the "Create class" screen**. In a real system it would be
   behind admin authentication.
 - Class name: required, ≤ 100 chars, **unique ignoring case and surrounding spaces** (`409`

@@ -29,8 +29,8 @@ Stop with `Ctrl+C` or `docker compose down`. Data is kept in the `pgdata` volume
 
 1. Type the student's **17-digit birth registration number** in the box at the top (it is
    remembered in the browser). Bangla digits are accepted.
-2. **Create class** (school admin): add e.g. `Class 6 - Morning Shift` with 120 seats. Every shift is
-   its own class.
+2. **Create class** (school admin): choose the class (1–10) and the shift (Morning / Day), enter the
+   seats, e.g. Class 6 + Morning Shift + 120. Every shift is its own class.
 3. **Classes**: see total / on hold / confirmed / available seats (refreshes every 3 s) and press
    **Apply**.
 4. **Application** page: status, live countdown, **Pay admission fee** (payment is simulated and
@@ -56,7 +56,7 @@ With Docker only:
 
 ```bash
 docker compose --profile test run --rm backend-tests    # 31 xUnit tests against a real PostgreSQL
-docker compose --profile test run --rm frontend-tests   # 23 Vitest + Testing Library tests
+docker compose --profile test run --rm frontend-tests   # 26 Vitest + Testing Library tests
 ```
 
 Without Docker (needs .NET 10 SDK / Node 20.19+ and a PostgreSQL server):
