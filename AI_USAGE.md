@@ -4,41 +4,20 @@
 
 **Claude Code** (Anthropic, model Claude Opus 5.5) in VS Code, working directly in this repository.
 
-## How I worked with it
+## What I used it for
 
-I treated the AI as a fast pair programmer: I decided what the system should do, it wrote most of
-the code and tests, and I ran, tried and checked the result, then asked for changes.
+- Turning the brief and my feature requests into a design: API contract, data model and the
+  PostgreSQL locking strategy.
+- Writing most of the code: backend, frontend, EF Core migration, Dockerfiles and
+  `docker-compose.yml`.
+- Writing and running the backend integration tests (including concurrency) and the frontend tests.
+- Drafting the README and ASSUMPTIONS.
 
-**What I did**
+## Where it went wrong, and how it was caught
 
-- Read the brief and set the direction and constraints: the required stack, Docker-only startup,
-  and keeping the project self-contained in one folder.
-- Set up and checked the environment: development against my local PostgreSQL, Docker's data
-  disk moved off my system drive, and verifying `docker compose up`, the tests in Docker and data
-  surviving `docker compose down` / `up`.
-- Defined the product beyond the brief after using the first version myself:
-  - choosing **Class 1–10** and the **shift** from dropdowns instead of typing a class name;
-  - separate **User panel** and **Admin panel**;
-  - **sign in / sign out** with the birth registration number, so each student sees their own pages;
-  - an admin **Applications** page showing each student's class, shift, status and whether the fee
-    is paid;
-  - a **sorted** class list with **class/shift search** and clear Available / Full status;
-  - the rule that **a student can apply for only one class**.
-- Tested the UI by hand with several student numbers and reported problems I found (see below).
-- Reviewed the documentation and decided what goes into the submission.
-
-**What the AI did**
-
-- Proposed the design (API contract, data model, PostgreSQL locking strategy) and wrote most of
-  the code: backend, frontend, EF Core migration, Dockerfiles, `docker-compose.yml`.
-- Wrote and ran the backend integration tests (including concurrency) and the frontend tests.
-- Drafted the README and ASSUMPTIONS, which I then reviewed.
-
-## Where things went wrong, and how they were caught
-
-1. **Wrong page after switching students (found by me in manual testing).** After signing out and
-   signing in as another student, the app reopened the previous student's page instead of the
-   class list. Fixed so every sign-in starts on Classes, and a test was added for it.
+1. **Wrong page after switching students.** After signing out and signing in as another student,
+   the app reopened the previous student's page instead of the class list. I noticed it while
+   testing the UI by hand; fixed so every sign-in starts on Classes, with a test added.
 2. **Race at the expiry boundary (caught in design review, before coding).** The first plan locked
    the class row only when creating a hold. A hold expiring *while* being confirmed could then
    also be given to another student — one seat too many. Fixed by also locking the class row
