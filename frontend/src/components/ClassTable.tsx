@@ -19,6 +19,7 @@ export function ClassTable({ classes, onApply, applyDisabledReason, applyingClas
             <th className="num">On hold</th>
             <th className="num">Confirmed</th>
             <th className="num">Available</th>
+            {onApply && <th>Availability</th>}
             {onApply && <th aria-label="Actions" />}
           </tr>
         </thead>
@@ -34,6 +35,15 @@ export function ClassTable({ classes, onApply, applyDisabledReason, applyingClas
                 <td className={`num ${full ? 'text-danger' : 'text-success'}`}>
                   <strong>{c.availableSeats}</strong>
                 </td>
+                {onApply && (
+                  <td>
+                    {full ? (
+                      <span className="badge badge-cancelled">Full — cannot apply</span>
+                    ) : (
+                      <span className="badge badge-confirmed">Available</span>
+                    )}
+                  </td>
+                )}
                 {onApply && (
                   <td className="actions">
                     <button

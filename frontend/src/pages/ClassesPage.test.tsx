@@ -21,6 +21,49 @@ function renderPage(studentId?: string) {
   );
 }
 
+describe('ClassesPage search and order', () => {
+  const many: SchoolClass[] = [
+    { id: 'c_10d', name: 'Class 10 - Day Shift', totalSeats: 5, heldSeats: 0, confirmedSeats: 0, availableSeats: 5 },
+    { id: 'c_2d', name: 'Class 2 - Day Shift', totalSeats: 5, heldSeats: 5, confirmedSeats: 0, availableSeats: 0 },
+    { id: 'c_2m', name: 'Class 2 - Morning Shift', totalSeats: 5, heldSeats: 1, confirmedSeats: 0, availableSeats: 4 },
+    { id: 'c_1d', name: 'Class 1 - Day Shift', totalSeats: 5, heldSeats: 0, confirmedSeats: 0, availableSeats: 5 },
+  ];
+  const rowIds = () => screen.getAllByTestId(/^class-row-/).map((r) => r.dataset.testid);
+
+  it('lists classes from Class 1 to Class 10, Morning before Day', async () => {
+    fakeBackend(() => json(200, many));
+
+    renderPage(STUDENT_ID);
+    await screen.findByTestId('class-row-c_1d');
+
+    expect(rowIds()).toEqual(['class-row-c_1d', 'class-row-c_2m', 'class-row-c_2d', 'class-row-c_10d']);
+  });
+
+  it('filters by class, shift and free seats, and blocks applying to a full class', async () => {
+    fakeBackend(() => json(200, many));
+
+    renderPage(STUDENT_ID);
+    await screen.findByTestId('class-row-c_1d');
+    await userEvent.selectOptions(screen.getByLabelText('Class'), '2');
+    expect(rowIds()).toEqual(['class-row-c_2m', 'class-row-c_2d']);
+
+    const full = within(screen.getByTestId('class-row-c_2d'));
+    expect(full.getByText('Full — cannot apply')).toBeInTheDocument();
+    expect(full.getByRole('button', { name: 'Full' })).toBeDisabled();
+    expect(within(screen.getByTestId('class-row-c_2m')).getByText('Available')).toBeInTheDocument();
+
+    await userEvent.selectOptions(screen.getByLabelText('Shift'), 'Day');
+    expect(rowIds()).toEqual(['class-row-c_2d']);
+
+    await userEvent.click(screen.getByLabelText('Only show classes with free seats'));
+    expect(screen.queryAllByTestId(/^class-row-/)).toHaveLength(0);
+    expect(screen.getByText(/No class matches your search/)).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Show all classes' }));
+    expect(rowIds()).toHaveLength(4);
+  });
+});
+
 describe('ClassesPage', () => {
   it('shows seat counts for every class and marks full classes', async () => {
     fakeBackend(() => json(200, classes));

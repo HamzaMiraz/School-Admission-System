@@ -42,8 +42,9 @@ The UI has two panels.
 1. **Sign in** with the student's **17-digit birth registration number** (no password; Bangla
    digits are accepted). The browser remembers it until **Sign out**. To try several students,
    sign out and sign in with another number, or use another browser / private window.
-2. **Classes**: see total / on hold / confirmed / available seats (refreshes every 3 s) and press
-   **Apply**.
+2. **Classes**: all classes in order (Class 1 → 10, Morning before Day) with total / on hold /
+   confirmed / available seats (refreshes every 3 s). Search by class and shift, or show only classes
+   with free seats. Each row says **Available** or **Full**; **Apply** works only when seats are free.
 3. **Application** page: status, live countdown, **Pay admission fee** (payment is simulated and
    always succeeds) and **Cancel application**. When the countdown ends the page shows EXPIRED and
    paying is disabled — no reload needed.
@@ -67,7 +68,7 @@ With Docker only:
 
 ```bash
 docker compose --profile test run --rm backend-tests    # 35 xUnit tests against a real PostgreSQL
-docker compose --profile test run --rm frontend-tests   # 31 Vitest + Testing Library tests
+docker compose --profile test run --rm frontend-tests   # 33 Vitest + Testing Library tests
 ```
 
 Without Docker (needs .NET 10 SDK / Node 20.19+ and a PostgreSQL server):

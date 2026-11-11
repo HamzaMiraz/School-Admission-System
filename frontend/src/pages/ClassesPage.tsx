@@ -5,6 +5,7 @@ import { ClassTable } from '../components/ClassTable';
 import { Alert, Loading, StaleDataWarning } from '../components/common';
 import { CLASS_POLL_MS } from '../config';
 import { usePolling } from '../hooks/usePolling';
+import { compareClassNames, GRADES, parseClassName, SHIFTS } from '../lib/classNames';
 import { useStudent } from '../student';
 
 interface ActionError {
@@ -18,6 +19,20 @@ export function ClassesPage() {
   const classes = usePolling(api.listClasses, CLASS_POLL_MS, 'classes');
   const [applyingClassId, setApplyingClassId] = useState<string>();
   const [actionError, setActionError] = useState<ActionError>();
+  const [gradeFilter, setGradeFilter] = useState('');
+  const [shiftFilter, setShiftFilter] = useState('');
+  const [onlyAvailable, setOnlyAvailable] = useState(false);
+  const filtering = gradeFilter !== '' || shiftFilter !== '' || onlyAvailable;
+
+  const visible = (classes.data ?? [])
+    .filter((c) => {
+      const parsed = parseClassName(c.name);
+      if (gradeFilter && parsed?.grade !== Number(gradeFilter)) return false;
+      if (shiftFilter && parsed?.shift.toLowerCase() !== shiftFilter.toLowerCase()) return false;
+      if (onlyAvailable && c.availableSeats <= 0) return false;
+      return true;
+    })
+    .sort((a, b) => compareClassNames(a.name, b.name));
 
   const apply = async (schoolClass: SchoolClass) => {
     setActionError(undefined);
@@ -63,12 +78,73 @@ export function ClassesPage() {
           {classes.data.length === 0 ? (
             <Alert kind="info">No classes are open for admission yet. Please check back later.</Alert>
           ) : (
-            <ClassTable
-              classes={classes.data}
-              onApply={apply}
-              applyDisabledReason={studentId ? undefined : 'Enter the birth registration number first'}
-              applyingClassId={applyingClassId}
-            />
+            <>
+              <div className="card filters">
+                <div>
+                  <label htmlFor="filter-grade">Class</label>
+                  <select
+                    id="filter-grade"
+                    className="input"
+                    value={gradeFilter}
+                    onChange={(e) => setGradeFilter(e.target.value)}
+                  >
+                    <option value="">All classes</option>
+                    {GRADES.map((g) => (
+                      <option key={g} value={g}>
+                        Class {g}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="filter-shift">Shift</label>
+                  <select
+                    id="filter-shift"
+                    className="input"
+                    value={shiftFilter}
+                    onChange={(e) => setShiftFilter(e.target.value)}
+                  >
+                    <option value="">All shifts</option>
+                    {SHIFTS.map((s) => (
+                      <option key={s} value={s}>
+                        {s} Shift
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <label className="checkbox">
+                  <input type="checkbox" checked={onlyAvailable} onChange={(e) => setOnlyAvailable(e.target.checked)} />
+                  Only show classes with free seats
+                </label>
+              </div>
+
+              {visible.length === 0 ? (
+                <Alert kind="info">
+                  No class matches your search
+                  {onlyAvailable ? ' with free seats right now' : ''}.{' '}
+                  {filtering && (
+                    <button
+                      type="button"
+                      className="btn btn-link"
+                      onClick={() => {
+                        setGradeFilter('');
+                        setShiftFilter('');
+                        setOnlyAvailable(false);
+                      }}
+                    >
+                      Show all classes
+                    </button>
+                  )}
+                </Alert>
+              ) : (
+                <ClassTable
+                  classes={visible}
+                  onApply={apply}
+                  applyDisabledReason={studentId ? undefined : 'Sign in first'}
+                  applyingClassId={applyingClassId}
+                />
+              )}
+            </>
           )}
         </>
       ) : classes.error ? (
