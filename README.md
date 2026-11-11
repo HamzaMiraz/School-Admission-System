@@ -10,20 +10,51 @@ in time the seat is released automatically.
 
 ## Run it
 
+**Requirement:** Docker (Docker Desktop on Windows/macOS) — **started and running**. Nothing else
+(.NET, Node.js, PostgreSQL) needs to be installed.
+
 ```bash
+git clone https://github.com/HamzaMiraz/School-Admission-System.git
+cd School-Admission-System
 docker compose up
 ```
 
-The first run builds the images (a few minutes). Then open:
+The first run builds the images (a few minutes). PostgreSQL, the backend and the frontend start
+together; the database tables are created automatically. Then open:
 
 | What | URL |
 | --- | --- |
-| **Web app (UI)** | **http://localhost:3000** |
+| **User panel** (parents) | **http://localhost:3000** |
+| **Admin panel** (school) | **http://localhost:3000/admin** |
 | Backend API | http://localhost:8080 (e.g. http://localhost:8080/classes) |
 
-Stop with `Ctrl+C` or `docker compose down`. Data is kept in the `pgdata` volume, so
-`docker compose down` followed by `docker compose up` loses nothing
-(`docker compose down -v` wipes it).
+### First steps (the database starts empty)
+
+1. Open the **Admin panel** → **Create class** → choose e.g. *Class 6* + *Morning Shift*, enter
+   *120* seats → **Create class**. Add as many classes as you like.
+2. Open the **User panel** → sign in with any 17-digit number, e.g. `20152691234567890`.
+3. Pick a class → **Apply** → **Pay admission fee** (or **Cancel application**).
+4. Back in the Admin panel → **Applications** to see who applied for which class and shift, and
+   who has paid.
+
+### Useful commands
+
+| Command | What it does |
+| --- | --- |
+| `docker compose up` | Start (logs in the terminal; `Ctrl+C` stops) |
+| `docker compose up -d` | Start in the background; the containers then also start automatically whenever Docker starts |
+| `docker compose up -d --build` | Rebuild after changing the code, then start |
+| `docker compose down` | Stop. Data is kept in the `pgdata` volume and is back on the next `up` |
+| `docker compose down -v` | Stop **and delete all data** |
+
+### If something goes wrong
+
+- **"Cannot connect to the Docker daemon" / "dockerDesktopLinuxEngine"** — Docker Desktop is not
+  running. Start it, wait until it says *running*, and run the command again.
+- **"Port is already allocated"** — another program uses port 3000 or 8080. Stop it, or change the
+  left-hand port in `docker-compose.yml` (e.g. `"3001:80"`).
+- **The page says it cannot reach the server** — the backend is still starting; it reconnects
+  by itself within a few seconds.
 
 ### Using the app
 
@@ -42,9 +73,10 @@ The UI has two panels.
 1. **Sign in** with the student's **17-digit birth registration number** (no password; Bangla
    digits are accepted). The browser remembers it until **Sign out**. To try several students,
    sign out and sign in with another number, or use another browser / private window.
-2. **Classes**: all classes in order (Class 1 → 10, Morning before Day) with total / on hold /
-   confirmed / available seats (refreshes every 3 s). Search by class and shift, or show only classes
-   with free seats. Each row says **Available** or **Full**; **Apply** works only when seats are free.
+2. **Classes**: one card per class and shift, in order (Class 1 → 10, Morning before Day), with a
+   seat bar and total / on hold / confirmed / free seats (refreshes every 3 s). Search by class and
+   shift, or show only classes with free seats. Each card says **Available** or **Full**; **Apply**
+   works only when seats are free. A student can apply for only one class at a time.
 3. **Application** page: status, live countdown, **Pay admission fee** (payment is simulated and
    always succeeds) and **Cancel application**. When the countdown ends the page shows EXPIRED and
    paying is disabled — no reload needed.
@@ -129,16 +161,23 @@ backend/
     Data/         DbContext, migrations (applied automatically on startup)
   tests/SchoolAdmission.Api.Tests/
 frontend/
-  src/pages/      Classes, Create class, Application, My applications
+  src/pages/      User panel: Login, Classes, Application, My applications
+                  Admin panel: Overview, Applications, Create class
+  src/components/ class cards, tables, alerts, error boundary
   src/api.ts      typed API client with human-readable errors
 docker-compose.yml
 ```
 
-## Local development (optional)
+## Run without Docker (optional, for development)
+
+Needs the .NET 10 SDK, Node.js 20.19+ and a running PostgreSQL. The backend's development settings
+([appsettings.Development.json](backend/src/SchoolAdmission.Api/appsettings.Development.json))
+connect to `localhost:5432` as `postgres` / `postgres`; change them there if yours differ. Stop the
+Docker version first (`docker compose down`), because both use port 8080.
 
 ```bash
-# backend on :8080 (uses appsettings.Development.json -> local PostgreSQL)
+# terminal 1 - backend on http://localhost:8080
 cd backend && dotnet run --project src/SchoolAdmission.Api
-# frontend on :5173
+# terminal 2 - frontend on http://localhost:5173
 cd frontend && npm install && npm run dev
 ```
