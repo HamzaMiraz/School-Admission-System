@@ -46,7 +46,8 @@ function UserLayout() {
       <header className="header">
         <div className="container header-inner">
           <Link to="/" className="brand">
-            🏫 School Admission
+            <span className="brand-logo">🏫</span>
+            <span>School Admission</span>
           </Link>
           <nav className="nav">
             <NavLink to="/" end>
@@ -56,7 +57,8 @@ function UserLayout() {
           </nav>
           <div className="user-box">
             <span className="user-id" title="Signed in with this birth registration number">
-              👤 <span className="mono">{studentId}</span>
+              <span className="avatar" aria-hidden>👤</span>
+              <span className="mono">{studentId}</span>
             </span>
             <button type="button" className="btn btn-header" onClick={signOut}>
               Sign out
@@ -82,7 +84,8 @@ function AdminLayout() {
       <header className="header header-admin">
         <div className="container header-inner">
           <Link to="/admin" className="brand">
-            🛠️ Admin Panel
+            <span className="brand-logo">🛠️</span>
+            <span>Admin Panel</span>
           </Link>
           <nav className="nav">
             <NavLink to="/admin" end>

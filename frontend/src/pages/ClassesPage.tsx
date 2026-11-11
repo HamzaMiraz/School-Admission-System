@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api, ApiError, errorMessage, type Hold, type SchoolClass } from '../api';
-import { ClassTable } from '../components/ClassTable';
+import { ClassCards } from '../components/ClassCards';
 import { Alert, Loading, StaleDataWarning } from '../components/common';
 import { CLASS_POLL_MS, HOLD_POLL_MS } from '../config';
 import { useNow } from '../hooks/useNow';
@@ -160,7 +160,7 @@ export function ClassesPage() {
                   )}
                 </Alert>
               ) : (
-                <ClassTable
+                <ClassCards
                   classes={visible}
                   onApply={apply}
                   applyDisabledReason={
