@@ -1,4 +1,4 @@
-import { Link, Navigate, NavLink, Outlet, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Navigate, NavLink, Outlet, Route, Routes, useNavigate } from 'react-router-dom';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { AdminApplicationsPage } from './pages/AdminApplicationsPage';
 import { AdminOverviewPage } from './pages/AdminOverviewPage';
@@ -32,10 +32,9 @@ export function App() {
 /** Parents' panel: only for a signed-in student; otherwise go to the sign-in page. */
 function UserLayout() {
   const { studentId, setStudentId } = useStudent();
-  const location = useLocation();
   const navigate = useNavigate();
 
-  if (!studentId) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  if (!studentId) return <Navigate to="/login" replace />;
 
   const signOut = () => {
     setStudentId('');

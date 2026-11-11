@@ -1,7 +1,10 @@
 import { useState, type FormEvent } from 'react';
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { normalizeStudentId, validateStudentId } from '../lib/studentId';
 import { useStudent } from '../student';
+
+/** Where every sign-in lands: the class list. Never the previous student's pages. */
+const HOME = '/';
 
 /**
  * Sign in with the student's birth registration number. There is no password: the brief
@@ -10,12 +13,10 @@ import { useStudent } from '../student';
 export function LoginPage() {
   const { studentId, setStudentId } = useStudent();
   const navigate = useNavigate();
-  const location = useLocation();
   const [draft, setDraft] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const returnTo = (location.state as { from?: string } | null)?.from ?? '/';
 
-  if (studentId) return <Navigate to={returnTo} replace />;
+  if (studentId) return <Navigate to={HOME} replace />;
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
@@ -24,7 +25,7 @@ export function LoginPage() {
     setError(problem);
     if (problem) return;
     setStudentId(value);
-    navigate(returnTo, { replace: true });
+    navigate(HOME, { replace: true });
   };
 
   return (

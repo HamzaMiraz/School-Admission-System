@@ -39,6 +39,19 @@ describe('user panel sign-in', () => {
     expect(localStorage.getItem('school-admission.studentId')).toBeNull();
   });
 
+  it('after signing out on another page, the next student starts on Classes', async () => {
+    fakeBackend((_, path) => json(200, path === '/classes' ? classes : []));
+    renderApp(<App />, { route: '/applications', studentId: STUDENT_ID });
+    expect(screen.getByRole('heading', { name: 'My applications' })).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sign out' }));
+    await userEvent.type(screen.getByLabelText(/birth registration number/i), '20159999999999999');
+    await userEvent.click(screen.getByRole('button', { name: 'Sign in' }));
+
+    expect(screen.getByRole('heading', { name: 'Classes' })).toBeInTheDocument();
+    expect(screen.getByText('20159999999999999')).toBeInTheDocument();
+  });
+
   it('a signed-in student sees only the parent menu', () => {
     fakeBackend(() => json(200, classes));
 
