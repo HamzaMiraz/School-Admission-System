@@ -2,13 +2,13 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { fakeBackend, json, renderApp } from '../test/utils';
-import { AdminPage } from './AdminPage';
+import { CreateClassPage } from './CreateClassPage';
 
-describe('AdminPage', () => {
+describe('CreateClassPage', () => {
   it('offers Class 1 to Class 10 and Morning/Day shifts', async () => {
     fakeBackend(() => json(200, []));
 
-    renderApp(<AdminPage />);
+    renderApp(<CreateClassPage />);
 
     const grades = screen.getByLabelText('Class').querySelectorAll('option:not([value=""])');
     expect([...grades].map((o) => o.textContent)).toEqual(Array.from({ length: 10 }, (_, i) => `Class ${i + 1}`));
@@ -23,7 +23,7 @@ describe('AdminPage', () => {
         : json(200, []),
     );
 
-    renderApp(<AdminPage />);
+    renderApp(<CreateClassPage />);
     await userEvent.selectOptions(screen.getByLabelText('Class'), '7');
     await userEvent.selectOptions(screen.getByLabelText('Shift'), 'Day');
     await userEvent.type(screen.getByLabelText('Total seats'), '80');
@@ -37,7 +37,7 @@ describe('AdminPage', () => {
   it('asks for a shift when none is chosen', async () => {
     fakeBackend(() => json(200, []));
 
-    renderApp(<AdminPage />);
+    renderApp(<CreateClassPage />);
     await userEvent.selectOptions(screen.getByLabelText('Class'), '3');
     await userEvent.type(screen.getByLabelText('Total seats'), '50');
     await userEvent.click(screen.getByRole('button', { name: 'Create class' }));

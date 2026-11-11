@@ -61,9 +61,7 @@ export function ClassesPage() {
         <>
           <StaleDataWarning error={classes.error} />
           {classes.data.length === 0 ? (
-            <Alert kind="info">
-              No classes yet. A school admin can add one on the <Link to="/admin">Create class</Link> page.
-            </Alert>
+            <Alert kind="info">No classes are open for admission yet. Please check back later.</Alert>
           ) : (
             <ClassTable
               classes={classes.data}

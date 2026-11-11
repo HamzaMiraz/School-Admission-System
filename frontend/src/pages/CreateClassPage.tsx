@@ -27,7 +27,7 @@ function validate(grade: string, shift: string, seats: string): string | null {
   return null;
 }
 
-export function AdminPage() {
+export function CreateClassPage() {
   const classes = usePolling(api.listClasses, CLASS_POLL_MS, 'classes');
   const [grade, setGrade] = useState('');
   const [shift, setShift] = useState('');
@@ -58,7 +58,7 @@ export function AdminPage() {
 
   return (
     <section>
-      <h1>Create class (school admin)</h1>
+      <h1>Create class</h1>
       <p className="muted">
         Choose the class and the shift. Each shift is admitted separately with its own seats — e.g. "Class 6 - Morning
         Shift" and "Class 6 - Day Shift".

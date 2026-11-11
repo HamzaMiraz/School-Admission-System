@@ -65,6 +65,40 @@ h2 {
   padding-bottom: 12px;
 }
 
+.header-admin {
+  background: #2d3748;
+}
+
+.nav a.nav-switch {
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  margin-left: 8px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+}
+
+.stat-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .brand {
   color: #fff;
   font-weight: 700;

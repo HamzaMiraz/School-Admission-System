@@ -32,8 +32,9 @@ Where the brief was silent, these are the choices I made and why.
 - The school admits **Class 1 – Class 10**, in a **Morning** or **Day** shift. The "Create class"
   screen offers these as dropdowns and sends the name as `"Class 6 - Morning Shift"`. The API itself
   still accepts any name, so the contract in the brief (`name` + `totalSeats`) is unchanged.
-- There is no login, so **anyone can use the "Create class" screen**. In a real system it would be
-  behind admin authentication.
+- The UI is split into a **User panel** (`/`, parents) and an **Admin panel** (`/admin`, school).
+  The brief asks for no login, so the admin panel is separated by URL and menu only — anyone can
+  open it. In a real system it would be behind admin authentication.
 - Class name: required, ≤ 100 chars, **unique ignoring case and surrounding spaces** (`409`
   otherwise) — two classes with the same name would confuse parents. `totalSeats`: whole number
   1 – 100 000. Classes can't be edited or deleted (not asked for).
