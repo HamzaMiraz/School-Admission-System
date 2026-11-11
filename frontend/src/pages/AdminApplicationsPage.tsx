@@ -5,7 +5,8 @@ import { HOLD_POLL_MS } from '../config';
 import { useNow } from '../hooks/useNow';
 import { usePolling } from '../hooks/usePolling';
 import { splitClassName } from '../lib/classNames';
-import { displayStatus, formatDateTime, formatDuration, holdDeadline } from '../lib/time';
+import { formatDeadline } from '../lib/deadline';
+import { displayStatus, formatDuration, holdDeadline } from '../lib/time';
 
 const STATUS_OPTIONS: { value: HoldStatus | ''; label: string }[] = [
   { value: '', label: 'All statuses' },
@@ -112,7 +113,7 @@ export function AdminApplicationsPage() {
                         <td className="mono">{hold.studentId}</td>
                         <td>{grade}</td>
                         <td>{shift}</td>
-                        <td>{hold.createdAt ? formatDateTime(hold.createdAt) : '—'}</td>
+                        <td>{hold.createdAt ? formatDeadline(hold.createdAt) : '—'}</td>
                         <td>
                           <StatusBadge status={status} />
                         </td>
@@ -121,7 +122,7 @@ export function AdminApplicationsPage() {
                             <>
                               <span className="text-success">✔ Paid</span>
                               {hold.confirmedAt && (
-                                <div className="muted small">{formatDateTime(hold.confirmedAt)}</div>
+                                <div className="muted small">{formatDeadline(hold.confirmedAt)}</div>
                               )}
                             </>
                           ) : status === 'HELD' ? (

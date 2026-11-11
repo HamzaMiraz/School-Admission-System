@@ -190,7 +190,7 @@ section > p.muted:first-of-type {
 /* ---------- Admin panel: sidebar layout ---------- */
 .admin-shell {
   display: grid;
-  grid-template-columns: 250px 1fr;
+  grid-template-columns: 250px minmax(0, 1fr);
   min-height: 100vh;
   /* keeps the dark sidebar column full-height on long pages */
   background: linear-gradient(90deg, #131536 0 250px, transparent 250px);
@@ -261,6 +261,7 @@ section > p.muted:first-of-type {
 }
 
 .admin-main {
+  min-width: 0;
   padding: 8px 36px 56px;
   max-width: 1200px;
   width: 100%;
@@ -1069,4 +1070,166 @@ section > p.muted:first-of-type {
   .hero {
     padding: 22px;
   }
+}
+
+/* =====================================================================
+   Admin panel: dark theme (scoped to .admin-shell; user panel unchanged)
+   ===================================================================== */
+.admin-shell {
+  --bg: #0b1020;
+  --surface: #121a2e;
+  --surface-2: #18223a;
+  --text: #e5e9f5;
+  --muted: #8b97b5;
+  --border: #243150;
+  --primary: #818cf8;
+  --primary-hover: #a5b4fc;
+  --primary-soft: rgba(129, 140, 248, 0.16);
+  --success: #4ade80;
+  --success-bg: rgba(34, 197, 94, 0.12);
+  --danger: #f87171;
+  --danger-bg: rgba(239, 68, 68, 0.12);
+  --warning: #fbbf24;
+  --warning-bg: rgba(245, 158, 11, 0.12);
+  --info: #a5b4fc;
+  --info-bg: rgba(99, 102, 241, 0.14);
+  --glass: rgba(18, 26, 46, 0.78);
+  --glass-border: rgba(56, 72, 110, 0.6);
+  --gradient: linear-gradient(135deg, #06b6d4 0%, #6366f1 55%, #8b5cf6 100%);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.35);
+
+  color: var(--text);
+  background:
+    linear-gradient(90deg, #070b17 0 250px, transparent 250px),
+    radial-gradient(700px circle at 85% 0%, rgba(99, 102, 241, 0.18), transparent 60%),
+    radial-gradient(600px circle at 30% 100%, rgba(6, 182, 212, 0.1), transparent 60%),
+    var(--bg);
+  color-scheme: dark;
+}
+
+.admin-shell .sidebar {
+  background: #070b17;
+  border-right: 1px solid #1a2440;
+}
+
+.admin-shell .side-nav a.active {
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.28), rgba(6, 182, 212, 0.08));
+  box-shadow: inset 3px 0 0 #22d3ee;
+}
+
+.admin-shell h1 {
+  background: linear-gradient(90deg, #ffffff, #c7d2fe);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.admin-shell a {
+  color: #a5b4fc;
+}
+
+/* Form controls */
+.admin-shell .input {
+  background: #0e1528;
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.admin-shell .input::placeholder {
+  color: #5f6b8a;
+}
+
+.admin-shell .input:focus {
+  border-color: #818cf8;
+  box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.2);
+}
+
+.admin-shell .btn {
+  background: var(--surface-2);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.admin-shell .btn-primary {
+  background: var(--gradient);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35);
+}
+
+.admin-shell .btn-primary:disabled {
+  background: #243150;
+  color: #8b97b5;
+  box-shadow: none;
+}
+
+/* Stats */
+.admin-shell .stat::before {
+  background: var(--gradient);
+}
+
+.admin-shell .stat-value {
+  color: #fff;
+}
+
+/* Tables */
+.admin-shell .table th {
+  background: #0e1528;
+  color: var(--muted);
+}
+
+.admin-shell .table tbody tr:hover {
+  background: rgba(129, 140, 248, 0.06);
+}
+
+/* Badges & alerts on dark */
+.admin-shell .badge-held {
+  box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.35);
+}
+
+.admin-shell .badge-confirmed {
+  box-shadow: inset 0 0 0 1px rgba(74, 222, 128, 0.35);
+}
+
+.admin-shell .badge-expired {
+  background: rgba(148, 163, 184, 0.12);
+  color: #94a3b8;
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.3);
+}
+
+.admin-shell .badge-cancelled {
+  box-shadow: inset 0 0 0 1px rgba(248, 113, 113, 0.35);
+}
+
+.admin-shell .alert-error {
+  color: #fecaca;
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+.admin-shell .alert-success {
+  color: #bbf7d0;
+  border-color: rgba(74, 222, 128, 0.3);
+}
+
+.admin-shell .alert-warning {
+  color: #fde68a;
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+.admin-shell .alert-info {
+  color: #c7d2fe;
+  border-color: rgba(129, 140, 248, 0.3);
+}
+
+@media (max-width: 860px) {
+  .admin-shell {
+    background:
+      radial-gradient(700px circle at 85% 0%, rgba(99, 102, 241, 0.18), transparent 60%),
+      var(--bg);
+  }
+}
+
+.admin-shell .table th,
+.admin-shell .table td {
+  padding: 11px 12px;
 }
