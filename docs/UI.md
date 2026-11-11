@@ -48,6 +48,27 @@ ends, the page switches to EXPIRED and paying is disabled — without a reload.
 
 ![Application](screenshots/04-application.png)
 
+### Application — paid
+
+After "Pay admission fee" the application is **CONFIRMED**: the seat is the student's, and paying
+again changes nothing.
+
+![Paid application](screenshots/10-application-paid.png)
+
+### Application — expired
+
+If the fee is not paid in time, the application becomes **EXPIRED**, the seat goes back to the
+class, and both buttons are disabled. The parent can apply again if seats are left.
+
+![Expired application](screenshots/11-application-expired.png)
+
+### One class per student
+
+While a student has an application running (or is admitted), the class list says so and every
+**Apply** button is disabled. After cancelling or expiry the student can apply to another class.
+
+![One class per student](screenshots/12-one-class-rule.png)
+
 ### My applications
 
 Every application of the signed-in student and its status. A student can apply for only one
@@ -83,6 +104,10 @@ status, class & shift, or search by birth registration number.
 
 ![Admin applications](screenshots/08-admin-applications.png)
 
+Filtered to **Paid & confirmed** only:
+
+![Admin applications, paid only](screenshots/13-admin-applications-paid.png)
+
 ### Create class
 
 Choose the class (1–10) and the shift (Morning / Day), enter the number of seats and the
@@ -91,3 +116,9 @@ deadline the class closes: parents still see it, but nobody can apply. Duplicate
 rejected.
 
 ![Create class](screenshots/09-admin-create-class.png)
+
+### Admin panel on a phone
+
+The sidebar turns into a top bar on small screens.
+
+<img src="screenshots/14-mobile-admin.png" alt="Admin panel on a phone" width="300">

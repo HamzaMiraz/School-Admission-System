@@ -7,9 +7,34 @@ in time the seat is released automatically.
 - **Backend:** ASP.NET Core (.NET 10) minimal API, EF Core, PostgreSQL — [backend/](backend/)
 - **Frontend:** React 19 + TypeScript + Vite — [frontend/](frontend/)
 - **Everything runs with Docker** — only Docker is needed on the machine.
-- **Screenshots of both panels:** [docs/UI.md](docs/UI.md)
+- **Screenshots of every screen:** [below](#screenshots), with explanations in [docs/UI.md](docs/UI.md)
 
 ![Classes](docs/screenshots/02-class-list.png)
+
+## Screenshots
+
+Taken from the running app with demo data. Click an image to see it full size; each screen is
+explained in [docs/UI.md](docs/UI.md).
+
+### User panel (parents)
+
+| | |
+| --- | --- |
+| **Sign in** — with the 17-digit birth registration number<br>[![Sign in](docs/screenshots/01-sign-in.png)](docs/screenshots/01-sign-in.png) | **Classes** — every class & shift with deadline, seats and Apply<br>[![Classes](docs/screenshots/02-class-list.png)](docs/screenshots/02-class-list.png) |
+| **Search & closed class** — filter by class/shift; a class past its deadline is closed<br>[![Search](docs/screenshots/03-class-list-search.png)](docs/screenshots/03-class-list-search.png) | **One class per student** — Apply is disabled while an application is running<br>[![One class rule](docs/screenshots/12-one-class-rule.png)](docs/screenshots/12-one-class-rule.png) |
+| **Application** — live countdown, Pay admission fee, Cancel application<br>[![Application](docs/screenshots/04-application.png)](docs/screenshots/04-application.png) | **Paid** — admission confirmed<br>[![Paid](docs/screenshots/10-application-paid.png)](docs/screenshots/10-application-paid.png) |
+| **Expired** — time ran out, seat released, paying disabled<br>[![Expired](docs/screenshots/11-application-expired.png)](docs/screenshots/11-application-expired.png) | **My applications** — all applications of the student<br>[![My applications](docs/screenshots/05-my-applications.png)](docs/screenshots/05-my-applications.png) |
+
+### Admin panel (school)
+
+| | |
+| --- | --- |
+| **Overview** — totals, seats and deadline of every class<br>[![Admin overview](docs/screenshots/07-admin-overview.png)](docs/screenshots/07-admin-overview.png) | **Applications** — student, class, shift, status and payment<br>[![Admin applications](docs/screenshots/08-admin-applications.png)](docs/screenshots/08-admin-applications.png) |
+| **Applications filtered** — e.g. only paid & confirmed<br>[![Admin paid](docs/screenshots/13-admin-applications-paid.png)](docs/screenshots/13-admin-applications-paid.png) | **Create class** — class 1–10, shift, seats, application deadline<br>[![Create class](docs/screenshots/09-admin-create-class.png)](docs/screenshots/09-admin-create-class.png) |
+
+### On a phone
+
+<img src="docs/screenshots/06-mobile-class-list.png" alt="User panel on a phone" width="260"> &nbsp; <img src="docs/screenshots/14-mobile-admin.png" alt="Admin panel on a phone" width="260">
 
 ## Run it
 
